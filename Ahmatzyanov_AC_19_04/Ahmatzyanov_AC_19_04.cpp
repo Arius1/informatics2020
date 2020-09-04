@@ -5,8 +5,12 @@ using namespace std;
 int main() {
 	cout << "Hello world" << endl;
 
-	char ch;
+	int ch;
 	cin >> ch;
-	
+
+	cout << 10. / ch << endl;
+
+	cin >> ch;
+
 	return 0;
 }
