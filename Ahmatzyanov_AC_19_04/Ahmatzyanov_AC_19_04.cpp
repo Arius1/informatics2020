@@ -7,7 +7,7 @@ struct pipe {
 	string id;
 	float length;
 	int diameter;
-	bool repair_status;
+	bool repair_status = false;
 };
 
 struct KC {
@@ -16,20 +16,30 @@ struct KC {
 	string Name;
 	int workshop_count;
 	int working_workshop_count;
-	double efficiency;
+	float efficiency;
 
 };
 
-int main() {
-	setlocale(LC_ALL, "Russian");
+int createpipe(x) {
+	pipe x;
 	cout << "Считывание данных для трубы: " << endl;
 
-	int ch;
-	cin >> ch;
+	cout << "Введите Индентификатор трубы: ";
+	cin >> x.id;
 
-	cout << 10. / ch << endl;
+	cout << "\nВведите длину трубы: ";
+	cin >> x.length;
 
-	cin >> ch;
+	cout << "\nВведите диаметр трубы: ";
+	cin >> x.diameter;
+}
 
+int main() {
+
+	setlocale(LC_ALL, "Russian");
+
+	pipe pipe_1;
+	pipe_1.id = "1A";
+	cout << pipe_1.id;
 	return 0;
 }
