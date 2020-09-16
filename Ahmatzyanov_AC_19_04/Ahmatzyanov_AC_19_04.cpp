@@ -23,7 +23,7 @@ struct KC {
 };
 
 pipe create_pipe() {
-	setlocale(LC_ALL, "Russian");
+	
 	pipe p;
 	cout << "Считывание данных для трубы: " << endl;
 	
@@ -63,7 +63,7 @@ void printPipe(pipe n) {
 
 	cout << "Длина трубы: " << n.length << endl;
 	cout << "Диаметр трубы: " << n.diameter << endl;
-	cout << "Статус: Труба" << ((n.repair_status == true) ? " в ремонте" : " работает") << endl;
+	cout << "Статус: Труба" << (n.repair_status == true ? " в ремонте" : " работает") << endl;
 
 }
 
@@ -77,8 +77,8 @@ void printKC(KC n) {
 
 }
 
-void changePipeRepairStatus(pipe changePipe, bool status) {
-	changePipe.repair_status = status;
+void changePipeRepairStatus(bool &repair_status, bool status) {
+	repair_status = status;
 }
 
 pipe readPipeFile() {
@@ -115,8 +115,8 @@ int main() {
 	KC kc1 = create_KC();
 	printKC(kc1);
 
-	bool j = true;
-	changePipeRepairStatus(pipe1, j);
+	bool j = 1;
+	changePipeRepairStatus(pipe1.repair_status, j);
 	printPipe(pipe1);
 	
 	pipe pipe2 = readPipeFile();
