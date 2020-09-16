@@ -1,4 +1,5 @@
 ﻿#include <iostream>
+#include <string>
 
 using namespace std;
 
@@ -20,18 +21,20 @@ struct KC {
 
 };
 
-int createpipe(x) {
-	pipe x;
+pipe createpipe() {
+	setlocale(LC_ALL, "Russian");
+	pipe p;
 	cout << "Считывание данных для трубы: " << endl;
-
-	cout << "Введите Индентификатор трубы: ";
-	cin >> x.id;
+	
+	p.id = " ";
 
 	cout << "\nВведите длину трубы: ";
-	cin >> x.length;
+	cin >> p.length;
 
 	cout << "\nВведите диаметр трубы: ";
-	cin >> x.diameter;
+	cin >> p.diameter;
+
+	return p;
 }
 
 int main() {
@@ -40,6 +43,10 @@ int main() {
 
 	pipe pipe_1;
 	pipe_1.id = "1A";
-	cout << pipe_1.id;
+	cout << pipe_1.id << endl;
+
+	pipe pipe1 = createpipe();
+	cout << pipe1.diameter << endl;
+
 	return 0;
 }
