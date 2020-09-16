@@ -37,6 +37,28 @@ pipe createpipe() {
 	return p;
 }
 
+pipe createKC() {
+	setlocale(LC_ALL, "Russian");
+	pipe p;
+	cout << "Считывание данных для трубы: " << endl;
+
+	p.id = " ";
+
+	cout << "\nВведите длину трубы: ";
+	cin >> p.length;
+
+	cout << "\nВведите диаметр трубы: ";
+	cin >> p.diameter;
+
+	return p;
+}
+
+void print_pipe(pipe n) {
+	cout << "Длина трубы: " << n.length << endl;
+	cout << "Диаметр трубы: " << n.diameter << endl;
+	cout << "Статус: Труба" << ((n.repair_status == true) ? " в ремонте" : " работает") << endl;
+}
+
 int main() {
 
 	setlocale(LC_ALL, "Russian");
@@ -47,6 +69,8 @@ int main() {
 
 	pipe pipe1 = createpipe();
 	cout << pipe1.diameter << endl;
+
+	print_pipe(pipe1);
 
 	return 0;
 }
