@@ -9,18 +9,31 @@ struct pipe {
 	string id;
 	float length;
 	int diameter;
-	bool repair_status = false;
+	bool repairStatus = false;
 };
 
 struct KC {
 	
 	string id;
 	string Name;
-	double workshop_count;
-	double working_workshop_count;
+	int workshopCount;
+	int workingWorkshopCount;
 	float efficiency;
 
 };
+
+int getIntValue() {
+	while (true) {
+		int value;
+		cin >> value;
+		if (value != NULL) {
+			return value;
+		}
+		else {
+			cout << "Неправильный ввод \n";
+		}
+	}
+}
 
 pipe create_pipe() {
 	
@@ -41,7 +54,7 @@ pipe create_pipe() {
 KC create_KC() {
 	
 	KC newKC;
-	cout << "Считывание данных для трубы: " << endl;
+	cout << "Считывание данных для КС: " << endl;
 
 	newKC.id = " ";
 
@@ -49,12 +62,13 @@ KC create_KC() {
 	cin >> newKC.Name;
 
 	cout << "\nВведите кол-во станций: ";
-	cin >> newKC.workshop_count;
+	cin >> newKC.workshopCount;
 
 	cout << "\nВведите кол-во работающих станций: ";
-	cin >> newKC.working_workshop_count;
+	cin >> newKC.workingWorkshopCount;
 
-	newKC.efficiency = newKC.working_workshop_count / newKC.workshop_count * 100;
+	cout << "\nВведите 'эффективность КС: " << endl;
+	cin >> newKC.efficiency;
 
 	return newKC;
 }
@@ -63,7 +77,7 @@ void printPipe(pipe n) {
 
 	cout << "Длина трубы: " << n.length << endl;
 	cout << "Диаметр трубы: " << n.diameter << endl;
-	cout << "Статус: Труба" << (n.repair_status == true ? " в ремонте" : " работает") << endl;
+	cout << "Статус: Труба" << (n.repairStatus == true ? " в ремонте" : " работает") << endl;
 
 }
 
@@ -71,14 +85,18 @@ void printKC(KC n) {
 
 	setlocale(LC_ALL, "Russian");
 	cout << "Название КС: " << n.Name << endl;
-	cout << "Кол-во цехов: " << n.workshop_count << endl;
-	cout << "Кол-во работающих цехов: " << n.working_workshop_count << endl;
-	cout << "Эффективность КС: " << n.efficiency << "%" << endl;
+	cout << "Кол-во цехов: " << n.workshopCount << endl;
+	cout << "Кол-во работающих цехов: " << n.workingWorkshopCount << endl;
+	cout << "Эффективность КС: " << n.efficiency << endl;
 
 }
 
 void changePipeRepairStatus(bool &repair_status, bool status) {
 	repair_status = status;
+}
+
+void changeKCWorkingWorkshopCount(int &workingCount, int count) {
+	workingCount += count;
 }
 
 pipe readPipeFile() {
@@ -92,6 +110,17 @@ pipe readPipeFile() {
 	return newPipe;
 }
 
+KC readKCFile() {
+	KC newKC;
+	ifstream fin;
+	fin.open("inKC.txt", ios::in);
+	if (fin.is_open()) {
+		fin >> newKC.Name >> newKC.workshopCount >> newKC.workingWorkshopCount >> newKC.efficiency;
+	}
+	fin.close();
+	return newKC;
+}
+
 void printPipeFile(const pipe& writePipe) {
 	ofstream fout;
 	fout.open("outPipe.txt", ios::out);
@@ -101,13 +130,22 @@ void printPipeFile(const pipe& writePipe) {
 	fout.close();
 }
 
+void printKCeFile(const KC& writeKC) {
+	ofstream fout;
+	fout.open("outKC.txt", ios::out);
+	if (fout.is_open()) {
+		fout << writeKC.Name << endl << writeKC.workshopCount << endl << writeKC.workingWorkshopCount << endl << writeKC.efficiency << endl;
+	}
+	fout.close();
+}
+
 int main() {
 
 	setlocale(LC_ALL, "Russian");
 
-	pipe pipe_1;
-	pipe_1.id = "1A";
-	cout << pipe_1.id << endl;
+	pipe pipeTest;
+	pipeTest.id = "1A";
+	cout << pipeTest.id << endl;
 
 	pipe pipe1 = create_pipe();
 	printPipe(pipe1);
@@ -116,12 +154,14 @@ int main() {
 	printKC(kc1);
 
 	bool j = 1;
-	changePipeRepairStatus(pipe1.repair_status, j);
+	changePipeRepairStatus(pipe1.repairStatus, j);
 	printPipe(pipe1);
 	
 	pipe pipe2 = readPipeFile();
 	printPipeFile(pipe2);
 
+	changeKCWorkingWorkshopCount(kc1.workingWorkshopCount, -2);
+	printKC(kc1);
 
 	return 0;
 }
