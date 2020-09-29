@@ -146,10 +146,65 @@ void printKCFile(const KC& writeKC) {
 	fout.close();
 }
 
+void Menu() {
+	cout << "1. Создать новую трубу\n"
+		<< "2. Создать новый КС\n"
+		<< "3. Считать трубу из файла\n"
+		<< "4. Считать КС из файла \n"
+		<< "5. Вывести трубу\n"
+		<< "6. Вывести трубу в файл\n"
+		<< "7. Вывести КС\n"
+		<< "8. Вывести КС в файл\n"
+		<< "9. Выключить трубу"
+		<< "10. Изменить количество работающих цехов"
+		<< ""
+		<< "0. Выход\n";
+}
+
 int main() {
 
 	setlocale(LC_ALL, "Russian");
 
+	while (1) {
+		Menu();
+		int i;
+		cin >> i;
+		switch (i) {
+		case 1: {
+			pipe pipe1 = createPipe();
+			printPipe(pipe1);
+			break;
+		}
+		case 2: {
+			KC kc1 = create_KC();
+			printKC(kc1);
+			break;
+		}
+		case 3: {
+			break;
+		}
+		case 4: {
+			break;
+		}
+		case 5: {
+			break;
+		}
+		case 6: {
+			break;
+		}
+		case 7: {
+			break;
+		}
+		case 8: {
+			break;
+		}
+		case 0: {
+			break;
+		}
+
+		}
+	}
+	/*
 	pipe pipeTest;
 	pipeTest.id = "1A";
 	cout << pipeTest.id << endl;
@@ -172,6 +227,7 @@ int main() {
 
 	changeKCWorkingWorkshopCount(kc1.workingWorkshopCount, -2);
 	printKCFile(kc1);
+	*/
 
 	return 0;
 }
