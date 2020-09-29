@@ -7,7 +7,7 @@ using namespace std;
 struct pipe {
 
 	string id;
-	float length;
+	double length;
 	int diameter;
 	bool repairStatus = false;
 };
@@ -18,35 +18,43 @@ struct KC {
 	string Name;
 	int workshopCount;
 	int workingWorkshopCount;
-	float efficiency;
+	double efficiency;
 
 };
 
-int getIntValue() {
-	while (true) {
-		int value;
+void getIntValue(int &value, string text, int border1, int border2) {
+
+	do {
+		cin.clear();
+		cin.ignore(10000, '\n');
+		cout << text << endl;
 		cin >> value;
-		if (value != NULL) {
-			return value;
-		}
-		else {
-			cout << "Неправильный ввод \n";
-		}
-	}
+	} while (cin.fail() || value < border1 || value > border2);
+
 }
 
-pipe create_pipe() {
+void getDoubleValue(double &value, string text, int border1, int border2) {
+
+	do {
+		cin.clear();
+		cin.ignore(10000, '\n');
+		cout << text << endl;
+		cin >> value;
+	} while (cin.fail() || value < border1 || value > border2);
+
+}
+pipe createPipe() {
 	
 	pipe p;
-	cout << "Считывание данных для трубы: " << endl;
+	cout << "Далее будут считываться данные для трубы. Нажмите Enter." << endl;
 	
 	p.id = " ";
 
-	cout << "\nВведите длину трубы: ";
-	cin >> p.length;
+	string coutText = "\nВведите длину трубы: ";
+	getDoubleValue(p.length, coutText, 0, 10000);
 
-	cout << "\nВведите диаметр трубы: ";
-	cin >> p.diameter;
+	coutText = "\nВведите диаметр трубы: ";
+	getIntValue(p.diameter, coutText, 0, 1000);
 
 	return p;
 }
@@ -58,24 +66,24 @@ KC create_KC() {
 
 	newKC.id = " ";
 
-	cout << "\nВведите название КС: ";
+	string coutText = "\nВведите название КС: ";
 	cin >> newKC.Name;
 
-	cout << "\nВведите кол-во станций: ";
-	cin >> newKC.workshopCount;
+	coutText = "\nВведите кол-во станций: ";
+	getIntValue(newKC.workshopCount, coutText, 0, 1000);
 
-	cout << "\nВведите кол-во работающих станций: ";
-	cin >> newKC.workingWorkshopCount;
+	coutText = "\nВведите кол-во работающих станций: ";
+	getIntValue(newKC.workingWorkshopCount, coutText, 0, 1000);
 
-	cout << "\nВведите 'эффективность КС: " << endl;
-	cin >> newKC.efficiency;
+	coutText = "\nВведите 'эффективность КС: ";
+	getDoubleValue(newKC.efficiency, coutText, 0, 100);
 
 	return newKC;
 }
 
 void printPipe(pipe n) {
 
-	cout << "Длина трубы: " << n.length << endl;
+	cout << "\nДлина трубы: " << n.length << endl;
 	cout << "Диаметр трубы: " << n.diameter << endl;
 	cout << "Статус: Труба" << (n.repairStatus == true ? " в ремонте" : " работает") << endl;
 
@@ -83,8 +91,7 @@ void printPipe(pipe n) {
 
 void printKC(KC n) {
 
-	setlocale(LC_ALL, "Russian");
-	cout << "Название КС: " << n.Name << endl;
+	cout << "\nНазвание КС: " << n.Name << endl;
 	cout << "Кол-во цехов: " << n.workshopCount << endl;
 	cout << "Кол-во работающих цехов: " << n.workingWorkshopCount << endl;
 	cout << "Эффективность КС: " << n.efficiency << endl;
@@ -130,7 +137,7 @@ void printPipeFile(const pipe& writePipe) {
 	fout.close();
 }
 
-void printKCeFile(const KC& writeKC) {
+void printKCFile(const KC& writeKC) {
 	ofstream fout;
 	fout.open("outKC.txt", ios::out);
 	if (fout.is_open()) {
@@ -147,7 +154,7 @@ int main() {
 	pipeTest.id = "1A";
 	cout << pipeTest.id << endl;
 
-	pipe pipe1 = create_pipe();
+	pipe pipe1 = createPipe();
 	printPipe(pipe1);
 
 	KC kc1 = create_KC();
@@ -160,8 +167,11 @@ int main() {
 	pipe pipe2 = readPipeFile();
 	printPipeFile(pipe2);
 
+	pipe pipe3 = createPipe();
+	printPipe(pipe3);
+
 	changeKCWorkingWorkshopCount(kc1.workingWorkshopCount, -2);
-	printKC(kc1);
+	printKCFile(kc1);
 
 	return 0;
 }
