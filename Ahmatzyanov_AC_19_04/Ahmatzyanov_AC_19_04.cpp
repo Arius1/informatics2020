@@ -26,7 +26,7 @@ void getIntValue(int &value, string text, int border1, int border2) {
 
 	do {
 		cin.clear();
-		cin.ignore(10000, '\n');
+		cin.ignore(32767, '\n');
 		cout << text << endl;
 		cin >> value;
 	} while (cin.fail() || value < border1 || value > border2);
@@ -37,7 +37,7 @@ void getDoubleValue(double &value, string text, int border1, int border2) {
 
 	do {
 		cin.clear();
-		cin.ignore(10000, '\n');
+		cin.ignore(32767, '\n');
 		cout << text << endl;
 		cin >> value;
 	} while (cin.fail() || value < border1 || value > border2);
