@@ -6,19 +6,19 @@ using namespace std;
 
 struct pipe {
 
-	string id;
-	double length;
-	int diameter;
+	string id = " ";
+	double length = 0;
+	int diameter = 0;
 	bool repairStatus = false;
 };
 
 struct KC {
 	
-	string id;
-	string Name;
-	int workshopCount;
-	int workingWorkshopCount;
-	double efficiency;
+	string id = " ";
+	string Name = " "; 
+	int workshopCount = 0;
+	int workingWorkshopCount = 0;
+	double efficiency = 0;
 
 };
 
@@ -46,7 +46,7 @@ void getDoubleValue(double &value, string text, int border1, int border2) {
 pipe createPipe() {
 	
 	pipe p;
-	cout << "Далее будут считываться данные для трубы. Нажмите Enter." << endl;
+	cout << "Считывание данных для трубы:" << endl;
 	
 	p.id = " ";
 
@@ -147,7 +147,7 @@ void printKCFile(const KC& writeKC) {
 }
 
 void Menu() {
-	cout << "1. Создать новую трубу\n"
+	cout << "\n1. Создать новую трубу\n"
 		<< "2. Создать новый КС\n"
 		<< "3. Считать трубу из файла\n"
 		<< "4. Считать КС из файла \n"
@@ -155,9 +155,9 @@ void Menu() {
 		<< "6. Вывести трубу в файл\n"
 		<< "7. Вывести КС\n"
 		<< "8. Вывести КС в файл\n"
-		<< "9. Выключить трубу"
-		<< "10. Изменить количество работающих цехов"
-		<< ""
+		<< "9. Изменить статус ремонта трубы\n"
+		<< "10. Изменить количество работающих цехов\n"
+		<< "\n"
 		<< "0. Выход\n";
 }
 
@@ -165,45 +165,99 @@ int main() {
 
 	setlocale(LC_ALL, "Russian");
 
+	pipe pipe1;
+	KC kc1;
+
 	while (1) {
 		Menu();
 		int i;
 		cin >> i;
 		switch (i) {
 		case 1: {
-			pipe pipe1 = createPipe();
-			printPipe(pipe1);
+			pipe1 = createPipe();
 			break;
 		}
 		case 2: {
-			KC kc1 = create_KC();
-			printKC(kc1);
+			kc1 = create_KC();
 			break;
 		}
 		case 3: {
+			pipe1 = readPipeFile();
 			break;
 		}
 		case 4: {
+			kc1 = readKCFile();
 			break;
 		}
 		case 5: {
+			if (pipe1.length != 0) {
+				printPipe(pipe1);
+			}	
+			else {
+				cout << "Труба не существует\n";
+			}
 			break;
 		}
 		case 6: {
+			if (pipe1.length != 0) {
+				printPipeFile(pipe1);
+			}	
+			else {
+				cout << "Труба не существует\n";
+			}
 			break;
 		}
 		case 7: {
+			if (kc1.workshopCount != 0) {
+				printKC(kc1);
+			}
+			else {
+				cout << "КС не существует\n";
+			}
 			break;
 		}
 		case 8: {
+			if (kc1.workshopCount != 0) {
+				printKCFile(kc1);
+			}
+			else {
+				cout << "КС не существует\n";
+			}
+			break;
+		}
+		case 9: {
+			if (pipe1.length != 0) {
+				bool j = 1;
+				changePipeRepairStatus(pipe1.repairStatus, j);
+			}
+			else {
+				cout << "Труба не существует\n";
+			}
+			break;
+		}
+		case 10: {
+			if (kc1.workshopCount != 0) {
+				int count;
+				cout << "Введите, сколько цехов вы хотите включить(положительное число)/выключить(отрицательное число): ";
+				cin >> count;
+				changeKCWorkingWorkshopCount(kc1.workingWorkshopCount, count);
+			}
+			else {
+				cout << "КС не существует\n";
+			}
 			break;
 		}
 		case 0: {
+			return 0;
 			break;
+		}
+		default: {
+			cout << "Неправильный ввод!\n";
 		}
 
 		}
 	}
+
 	/*
 	pipe pipeTest;
 	pipeTest.id = "1A";
