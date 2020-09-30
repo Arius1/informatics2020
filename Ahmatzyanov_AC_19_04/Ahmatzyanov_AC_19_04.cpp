@@ -22,27 +22,27 @@ struct KC {
 
 };
 
-void getIntValue(int &value, string text, int border1, int border2) {
-
-	do {
+int getIntValue(string text, int border1, int border2) {
+	int value;
+	cout << text << endl;
+	while (!(cin >> value) || value < border1 || value > border2) {
 		cin.clear();
 		cin.ignore(32767, '\n');
-		cout << text << endl;
-		cin >> value;
-	} while (cin.fail() || value < border1 || value > border2);
-
+		cout << "\nНеправильный ввод! Введите от " << border1 << " до " << border2 << ": ";
+	}
+	return value;
 }
 
-void getDoubleValue(double &value, string text, int border1, int border2) {
-
-	do {
+double getDoubleValue(string text, int border1, int border2) {
+	double value;
+	cout << text << endl;
+	while (!(cin >> value) || value < border1 || value > border2){
 		cin.clear();
 		cin.ignore(32767, '\n');
-		cout << text << endl;
-		cin >> value;
-	} while (cin.fail() || value < border1 || value > border2);
-
+	}
+	return value;
 }
+
 pipe createPipe() {
 	
 	pipe p;
@@ -50,11 +50,9 @@ pipe createPipe() {
 	
 	p.id = " ";
 
-	string coutText = "\nВведите длину трубы: ";
-	getDoubleValue(p.length, coutText, 0, 10000);
+	p.length = getDoubleValue("\nВведите длину трубы: ", 0, 10000);
 
-	coutText = "\nВведите диаметр трубы: ";
-	getIntValue(p.diameter, coutText, 0, 1000);
+	p.diameter = getIntValue("\nВведите диаметр трубы : ", 0, 5000);
 
 	return p;
 }
@@ -66,17 +64,15 @@ KC create_KC() {
 
 	newKC.id = " ";
 
-	string coutText = "\nВведите название КС: ";
-	cin >> newKC.Name;
+	cout << "\nВведите название КС: ";
+	cin.get();
+	getline(cin, newKC.Name);
 
-	coutText = "\nВведите кол-во станций: ";
-	getIntValue(newKC.workshopCount, coutText, 0, 1000);
+	newKC.workshopCount = getIntValue("\nВведите кол-во станций: ", 0, 1000);
 
-	coutText = "\nВведите кол-во работающих станций: ";
-	getIntValue(newKC.workingWorkshopCount, coutText, 0, 1000);
+	newKC.workingWorkshopCount = getIntValue("\nВведите кол-во работающих станций: ", 0, 1000);
 
-	coutText = "\nВведите 'эффективность КС: ";
-	getDoubleValue(newKC.efficiency, coutText, 0, 100);
+	newKC.efficiency = getDoubleValue("\nВведите эффективность станции: ", 0, 100);
 
 	return newKC;
 }
@@ -99,11 +95,17 @@ void printKC(KC n) {
 }
 
 void changePipeRepairStatus(bool &repair_status, bool status) {
-	repair_status = status;
+	repair_status = !repair_status;
 }
 
-void changeKCWorkingWorkshopCount(int &workingCount, int count) {
-	workingCount += count;
+int changeKCWorkingWorkshopCount(int workingCount, int count) {
+	
+	if ((workingCount += count) >= 0) {
+		workingCount += count;
+	}
+	else {
+		return -1;
+	}
 }
 
 pipe readPipeFile() {
@@ -112,8 +114,8 @@ pipe readPipeFile() {
 	fin.open("inPipe.txt", ios::in);
 	if (fin.is_open()) {
 		fin >> newPipe.length >> newPipe.diameter;
+		fin.close();
 	}
-	fin.close();
 	return newPipe;
 }
 
@@ -123,27 +125,27 @@ KC readKCFile() {
 	fin.open("inKC.txt", ios::in);
 	if (fin.is_open()) {
 		fin >> newKC.Name >> newKC.workshopCount >> newKC.workingWorkshopCount >> newKC.efficiency;
+		fin.close();
 	}
-	fin.close();
 	return newKC;
 }
 
 void printPipeFile(const pipe& writePipe) {
 	ofstream fout;
-	fout.open("outPipe.txt", ios::out);
+	fout.open("inPipe.txt", ios::out);
 	if (fout.is_open()) {
 		fout << writePipe.length << endl << writePipe.diameter << endl;
+		fout.close();
 	}
-	fout.close();
 }
 
 void printKCFile(const KC& writeKC) {
 	ofstream fout;
-	fout.open("outKC.txt", ios::out);
+	fout.open("inKC.txt", ios::out);
 	if (fout.is_open()) {
 		fout << writeKC.Name << endl << writeKC.workshopCount << endl << writeKC.workingWorkshopCount << endl << writeKC.efficiency << endl;
+		fout.close();
 	}
-	fout.close();
 }
 
 void Menu() {
@@ -170,8 +172,8 @@ int main() {
 
 	while (1) {
 		Menu();
-		int i;
-		cin >> i;
+		string text = "Введите команду: ";
+		int i = getIntValue(text, 0, 10);
 		switch (i) {
 		case 1: {
 			pipe1 = createPipe();
@@ -227,7 +229,7 @@ int main() {
 		}
 		case 9: {
 			if (pipe1.length != 0) {
-				bool j = 1;
+				bool j = true;
 				changePipeRepairStatus(pipe1.repairStatus, j);
 			}
 			else {
@@ -240,7 +242,12 @@ int main() {
 				int count;
 				cout << "Введите, сколько цехов вы хотите включить(положительное число)/выключить(отрицательное число): ";
 				cin >> count;
-				changeKCWorkingWorkshopCount(kc1.workingWorkshopCount, count);
+				if (changeKCWorkingWorkshopCount(kc1.workingWorkshopCount, count) != -1) {
+					kc1.workingWorkshopCount = changeKCWorkingWorkshopCount(kc1.workingWorkshopCount, count);
+				}
+				else {
+					cout << "Неправильный ввод, нет столько станций для выключения";
+				}
 			}
 			else {
 				cout << "КС не существует\n";
@@ -253,35 +260,11 @@ int main() {
 		}
 		default: {
 			cout << "Неправильный ввод!\n";
+			break;
 		}
 
 		}
 	}
-
-	/*
-	pipe pipeTest;
-	pipeTest.id = "1A";
-	cout << pipeTest.id << endl;
-
-	pipe pipe1 = createPipe();
-	printPipe(pipe1);
-
-	KC kc1 = create_KC();
-	printKC(kc1);
-
-	bool j = 1;
-	changePipeRepairStatus(pipe1.repairStatus, j);
-	printPipe(pipe1);
-	
-	pipe pipe2 = readPipeFile();
-	printPipeFile(pipe2);
-
-	pipe pipe3 = createPipe();
-	printPipe(pipe3);
-
-	changeKCWorkingWorkshopCount(kc1.workingWorkshopCount, -2);
-	printKCFile(kc1);
-	*/
 
 	return 0;
 }
