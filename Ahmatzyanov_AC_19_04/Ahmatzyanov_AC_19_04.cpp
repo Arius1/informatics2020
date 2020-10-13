@@ -107,43 +107,20 @@ int changeKCWorkingWorkshopCount(int workingCount, int count) {
 		return -1;
 	}
 }
+void readFile(KC& newKC, pipe& newPipe) {
 
-pipe readPipeFile() {
-	pipe newPipe;
 	ifstream fin;
-	fin.open("inPipe.txt", ios::in);
+	fin.open("data.txt", ios::in);
 	if (fin.is_open()) {
-		fin >> newPipe.length >> newPipe.diameter;
+		fin >> newPipe.length >> newPipe.diameter >> newKC.Name >> newKC.workshopCount >> newKC.workingWorkshopCount >> newKC.efficiency;
 		fin.close();
 	}
-	return newPipe;
 }
-
-KC readKCFile() {
-	KC newKC;
-	ifstream fin;
-	fin.open("inKC.txt", ios::in);
-	if (fin.is_open()) {
-		fin >> newKC.Name >> newKC.workshopCount >> newKC.workingWorkshopCount >> newKC.efficiency;
-		fin.close();
-	}
-	return newKC;
-}
-
-void printPipeFile(const pipe& writePipe) {
+void printFile(const pipe writePipe, const KC writeKC) {
 	ofstream fout;
-	fout.open("inPipe.txt", ios::out);
+	fout.open("data.txt", ios::app);
 	if (fout.is_open()) {
-		fout << writePipe.length << endl << writePipe.diameter << endl;
-		fout.close();
-	}
-}
-
-void printKCFile(const KC& writeKC) {
-	ofstream fout;
-	fout.open("inKC.txt", ios::out);
-	if (fout.is_open()) {
-		fout << writeKC.Name << endl << writeKC.workshopCount << endl << writeKC.workingWorkshopCount << endl << writeKC.efficiency << endl;
+		fout << writePipe.length << "\t" << writePipe.diameter << "\n" << writeKC.Name << "\t" << writeKC.workshopCount << "\t" << writeKC.workingWorkshopCount << "\t" << writeKC.efficiency << endl;
 		fout.close();
 	}
 }
@@ -151,14 +128,12 @@ void printKCFile(const KC& writeKC) {
 void Menu() {
 	cout << "\n1. Создать новую трубу\n"
 		<< "2. Создать новый КС\n"
-		<< "3. Считать трубу из файла\n"
-		<< "4. Считать КС из файла \n"
+		<< "3. Считать трубу и КС из файла\n"
+		<< "4. Вывод трубы и КС в файл \n"
 		<< "5. Вывести трубу\n"
-		<< "6. Вывести трубу в файл\n"
-		<< "7. Вывести КС\n"
-		<< "8. Вывести КС в файл\n"
-		<< "9. Изменить статус ремонта трубы\n"
-		<< "10. Изменить количество работающих цехов\n"
+		<< "6. Вывести КС\n"
+		<< "7. Изменить статус ремонта трубы\n"
+		<< "8. Изменить количество работающих цехов\n"
 		<< "\n"
 		<< "0. Выход\n";
 }
@@ -173,7 +148,7 @@ int main() {
 	while (1) {
 		Menu();
 		string text = "Введите команду: ";
-		int i = getIntValue(text, 0, 10);
+		int i = getIntValue(text, 0, 8);
 		switch (i) {
 		case 1: {
 			pipe1 = createPipe();
@@ -184,11 +159,16 @@ int main() {
 			break;
 		}
 		case 3: {
-			pipe1 = readPipeFile();
+			readFile(kc1, pipe1);
 			break;
 		}
 		case 4: {
-			kc1 = readKCFile();
+			if (pipe1.length != 0 or kc1.workshopCount != 0) {
+				printFile(pipe1, kc1);
+			}
+			else {
+				cout << "Труба и КС не существуют\n";
+			}
 			break;
 		}
 		case 5: {
@@ -200,16 +180,8 @@ int main() {
 			}
 			break;
 		}
+		
 		case 6: {
-			if (pipe1.length != 0) {
-				printPipeFile(pipe1);
-			}	
-			else {
-				cout << "Труба не существует\n";
-			}
-			break;
-		}
-		case 7: {
 			if (kc1.workshopCount != 0) {
 				printKC(kc1);
 			}
@@ -218,16 +190,8 @@ int main() {
 			}
 			break;
 		}
-		case 8: {
-			if (kc1.workshopCount != 0) {
-				printKCFile(kc1);
-			}
-			else {
-				cout << "КС не существует\n";
-			}
-			break;
-		}
-		case 9: {
+		
+		case 7: {
 			if (pipe1.length != 0) {
 				bool j = true;
 				changePipeRepairStatus(pipe1.repairStatus, j);
@@ -237,7 +201,7 @@ int main() {
 			}
 			break;
 		}
-		case 10: {
+		case 8: {
 			if (kc1.workshopCount != 0) {
 				int count;
 				cout << "Введите, сколько цехов вы хотите включить(положительное число)/выключить(отрицательное число): ";
