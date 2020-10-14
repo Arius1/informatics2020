@@ -22,23 +22,15 @@ struct KC {
 
 };
 
-int getIntValue(string text, int border1, int border2) {
-	int value;
+template <typename T>
+
+T getValue(string text, T border1, T border2) {
+	T value;
 	cout << text << endl;
 	while (!(cin >> value) || value < border1 || value > border2) {
 		cin.clear();
 		cin.ignore(32767, '\n');
 		cout << "\nНеправильный ввод! Введите от " << border1 << " до " << border2 << ": ";
-	}
-	return value;
-}
-
-double getDoubleValue(string text, int border1, int border2) {
-	double value;
-	cout << text << endl;
-	while (!(cin >> value) || value < border1 || value > border2){
-		cin.clear();
-		cin.ignore(32767, '\n');
 	}
 	return value;
 }
@@ -50,9 +42,9 @@ pipe createPipe() {
 	
 	p.id = " ";
 
-	p.length = getDoubleValue("\nВведите длину трубы: ", 0, 10000);
+	p.length = getValue("\nВведите длину трубы: ", 0, 10000);
 
-	p.diameter = getIntValue("\nВведите диаметр трубы : ", 0, 5000);
+	p.diameter = getValue("\nВведите диаметр трубы : ", 0, 5000);
 
 	return p;
 }
@@ -68,11 +60,11 @@ KC create_KC() {
 	cin.get();
 	getline(cin, newKC.Name);
 
-	newKC.workshopCount = getIntValue("\nВведите кол-во станций: ", 0, 1000);
+	newKC.workshopCount = getValue("\nВведите кол-во станций: ", 0, 1000);
 
-	newKC.workingWorkshopCount = getIntValue("\nВведите кол-во работающих станций: ", 0, 1000);
+	newKC.workingWorkshopCount = getValue("\nВведите кол-во работающих станций: ", 0, 1000);
 
-	newKC.efficiency = getDoubleValue("\nВведите эффективность станции: ", 0, 100);
+	newKC.efficiency = getValue("\nВведите эффективность станции: ", 0, 100);
 
 	return newKC;
 }
@@ -97,10 +89,12 @@ void changePipeRepairStatus(bool &repair_status, bool status) {
 	repair_status = !repair_status;
 }
 
-int changeKCWorkingWorkshopCount(int workingCount, int count) {
-	workingCount += count;
-	return workingCount;
-	
+int changeKCWorkingWorkshopCount(KC changeKC) {
+	int count, border;
+	border = -1 * changeKC.workingWorkshopCount;
+	count = getValue("Введите, сколько цехов вы хотите включить(положительное число)/выключить(отрицательное число): ", border, changeKC.workshopCount - changeKC.workingWorkshopCount);
+	changeKC.workingWorkshopCount += count;
+	return changeKC.workingWorkshopCount;
 }
 void readFile(KC& newKC, pipe& newPipe) {
 
@@ -152,7 +146,7 @@ int main() {
 	while (1) {
 		Menu();
 		string text = "Введите команду: ";
-		int i = getIntValue(text, 0, 8);
+		int i = getValue(text, 0, 8);
 		switch (i) {
 		case 1: {
 			pipe1 = createPipe();
@@ -167,18 +161,17 @@ int main() {
 			break;
 		}
 		case 4: {
-			if (pipe1.length != 0 && kc1.workshopCount != 0) {
-				printPipeFile(pipe1);
-				printKCFile(kc1);
-			} else if(pipe1.length != 0) {
+			if (pipe1.length != 0) {
 				printPipeFile(pipe1);
 			}
-			else if (kc1.workshopCount != 0) {
-				printKCFile(kc1);
-			}
-
 			else {
-				cout << "Труба и КС не существуют\n";
+				cout << "Труба\n";
+			}
+			if (kc1.workshopCount != 0) {
+				printKCFile(kc1);
+			}
+			else {
+				cout << "КС не существуют\n";
 			}
 			break;
 		}
@@ -214,10 +207,8 @@ int main() {
 		}
 		case 8: {
 			if (kc1.workshopCount != 0) {
-				int count, border;
-				border = -1 * kc1.workingWorkshopCount;
-				count = getIntValue("Введите, сколько цехов вы хотите включить(положительное число)/выключить(отрицательное число): ", border, kc1.workshopCount-kc1.workingWorkshopCount);
-				kc1.workingWorkshopCount = changeKCWorkingWorkshopCount(kc1.workingWorkshopCount, count);
+				
+				kc1.workingWorkshopCount = changeKCWorkingWorkshopCount(kc1);
 			}
 			else {
 				cout << "КС не существует\n";
