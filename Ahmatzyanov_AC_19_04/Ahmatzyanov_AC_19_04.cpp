@@ -88,8 +88,7 @@ void printPipe(pipe n) {
 void printKC(KC n) {
 
 	cout << "\nНазвание КС: " << n.Name << endl;
-	cout << "Кол-во цехов: " << n.workshopCount << endl;
-	cout << "Кол-во работающих цехов: " << n.workingWorkshopCount << endl;
+	cout << "Кол-во цехов: " << n.workingWorkshopCount << " / " << n.workshopCount << endl;
 	cout << "Эффективность КС: " << n.efficiency << endl;
 
 }
@@ -99,13 +98,9 @@ void changePipeRepairStatus(bool &repair_status, bool status) {
 }
 
 int changeKCWorkingWorkshopCount(int workingCount, int count) {
+	workingCount += count;
+	return workingCount;
 	
-	if ((workingCount += count) >= 0) {
-		workingCount += count;
-	}
-	else {
-		return -1;
-	}
 }
 void readFile(KC& newKC, pipe& newPipe) {
 
@@ -203,15 +198,10 @@ int main() {
 		}
 		case 8: {
 			if (kc1.workshopCount != 0) {
-				int count;
-				cout << "Введите, сколько цехов вы хотите включить(положительное число)/выключить(отрицательное число): ";
-				cin >> count;
-				if (changeKCWorkingWorkshopCount(kc1.workingWorkshopCount, count) != -1) {
-					kc1.workingWorkshopCount = changeKCWorkingWorkshopCount(kc1.workingWorkshopCount, count);
-				}
-				else {
-					cout << "Неправильный ввод, нет столько станций для выключения";
-				}
+				int count, border;
+				border = -1 * kc1.workingWorkshopCount;
+				count = getIntValue("Введите, сколько цехов вы хотите включить(положительное число)/выключить(отрицательное число): ", border, 1000);
+				kc1.workingWorkshopCount = changeKCWorkingWorkshopCount(kc1.workingWorkshopCount, count);
 			}
 			else {
 				cout << "КС не существует\n";
