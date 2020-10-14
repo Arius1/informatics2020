@@ -111,11 +111,20 @@ void readFile(KC& newKC, pipe& newPipe) {
 		fin.close();
 	}
 }
-void printFile(const pipe writePipe, const KC writeKC) {
+void printPipeFile(const pipe writePipe) {
 	ofstream fout;
 	fout.open("data.txt", ios::app);
 	if (fout.is_open()) {
-		fout << writePipe.length << "\t" << writePipe.diameter << "\n" << writeKC.Name << "\t" << writeKC.workshopCount << "\t" << writeKC.workingWorkshopCount << "\t" << writeKC.efficiency << endl;
+		fout << writePipe.length << "\t" << writePipe.diameter << endl;
+		fout.close();
+	}
+}
+
+void printKCFile( const KC writeKC) {
+	ofstream fout;
+	fout.open("data.txt", ios::app);
+	if (fout.is_open()) {
+		fout <<  writeKC.Name << "\t" << writeKC.workshopCount << "\t" << writeKC.workingWorkshopCount << "\t" << writeKC.efficiency << endl;
 		fout.close();
 	}
 }
@@ -158,9 +167,16 @@ int main() {
 			break;
 		}
 		case 4: {
-			if (pipe1.length != 0 or kc1.workshopCount != 0) {
-				printFile(pipe1, kc1);
+			if (pipe1.length != 0 && kc1.workshopCount != 0) {
+				printPipeFile(pipe1);
+				printKCFile(kc1);
+			} else if(pipe1.length != 0) {
+				printPipeFile(pipe1);
 			}
+			else if (kc1.workshopCount != 0) {
+				printKCFile(kc1);
+			}
+
 			else {
 				cout << "Труба и КС не существуют\n";
 			}
@@ -200,7 +216,7 @@ int main() {
 			if (kc1.workshopCount != 0) {
 				int count, border;
 				border = -1 * kc1.workingWorkshopCount;
-				count = getIntValue("Введите, сколько цехов вы хотите включить(положительное число)/выключить(отрицательное число): ", border, 1000);
+				count = getIntValue("Введите, сколько цехов вы хотите включить(положительное число)/выключить(отрицательное число): ", border, kc1.workshopCount-kc1.workingWorkshopCount);
 				kc1.workingWorkshopCount = changeKCWorkingWorkshopCount(kc1.workingWorkshopCount, count);
 			}
 			else {
