@@ -39,25 +39,17 @@ void deleteObj(std::vector <vec>& group) {
 	}
 }
 
-//template <class vec>
-//int findObjByID(const std::vector <vec>& group, int id) {
-//	for (auto& obj : group) {
-//		if (obj.id == id) {
-//			return group;
-//		}
-//		else {
-//			return -1;
-//		}
-//	}
-//}
-//vector <int> findPipeByID(const vector <pipe>& group, int id) {
-//	vector <int> result;
-//	int i = 0;
-//	for (auto& p : group) {
-//		if (p.id == id) {
-//			result.push_back(i);
-//		}
-//		i++;
-//	}
-//	return result;
-//}
+
+template <class vec>
+std::vector <int> findByID(std::vector <vec>& group) {
+	std::vector <int> result;
+	int id = getValue("Введите id объекта", 0u, 10000u);
+	int i = 0;
+	for (auto& p : group) {
+		if (p.id == id) {
+			result.push_back(i);
+		}
+		i++;
+	}
+	return result;
+}

@@ -47,11 +47,25 @@ void Menu() {
 		<< "\n"
 		<< "0. Выход\n";
 }
-vector <int> findPipeByID(const vector <pipe>& group, int id) {
+template <typename par, class vec>
+using Filter = bool(*)(const vec& object, par parameter);
+
+bool checkByName(const KC& kc, string parameter) {
+	return kc.Name == parameter;
+}
+bool checkByStatus(const pipe& p, bool parameter) {
+	return p.repairStatus == parameter;
+}
+bool checkByWorkingPercent(const KC& kc, double parameter) {
+	return kc.workingWorkshopCount/kc.workshopCount >= parameter;
+}
+
+template <typename obj, class vec>
+vector <int> findObjectByFilter(const vector <vec>& group, Filter <obj, vec> f,  obj parameter) {
 	vector <int> result;
 	int i = 0;
 	for (auto& p : group) {
-		if (p.id == id) {
+		if (f(p, parameter)) {
 			result.push_back(i);
 		}
 		i++;
@@ -174,7 +188,6 @@ int main() {
 			break;
 		}
 		case 9: {
-			int id;
 			if (getValue("Удалить трубу - 1, удалить КС - 2", 1, 2) == 1) {
 				if (groupPipe.size() != 0) {
 
@@ -195,7 +208,7 @@ int main() {
 			break;
 		}
 		case 10: {
-			for (int i : findPipeByID(groupPipe, 1)) {
+			for (int i : findByID(groupPipe)) {
 				cout << groupPipe[i];
 			}
 			break;
