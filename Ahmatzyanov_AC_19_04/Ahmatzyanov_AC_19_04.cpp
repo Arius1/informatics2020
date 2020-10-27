@@ -4,20 +4,10 @@
 #include <vector>
 #include "KC.h"
 #include "pipe.h"
+#include "utils.h"
+
 using namespace std;
 
-template <typename T>
-
-T getValue(string text, T border1, T border2) {
-	T value;
-	cout << text << endl;
-	while (!(cin >> value) || value < border1 || value > border2) {
-		cin.clear();
-		cin.ignore(32767, '\n');
-		cout << "\nНеправильный ввод! Введите от " << border1 << " до " << border2 << ": ";
-	}
-	return value;
-}
 
 
 ostream& operator << (ostream& out, const pipe& p) {
@@ -84,13 +74,6 @@ void printKCFile(ofstream& fout, const KC writeKC) {
 	fout <<  writeKC.Name << "\t" << writeKC.workshopCount << "\t" << writeKC.workingWorkshopCount << "\t" << writeKC.efficiency << endl;
 }
 
-template <class vec>
-vec& select(vector <vec>& group) {
-	unsigned int index = getValue("Введите номер объекта: ", 1u, group.size());
-	return group[index-1];
-}
-
-
 void Menu() {
 	cout << "\n1. Создать новую трубу\n"
 		<< "2. Создать новую КС\n"
@@ -100,6 +83,7 @@ void Menu() {
 		<< "6. Вывести КС\n"
 		<< "7. Изменить статус ремонта трубы\n"
 		<< "8. Изменить количество работающих цехов\n"
+		<< "9. Удалить объект\n"
 		<< "\n"
 		<< "0. Выход\n";
 }
@@ -114,11 +98,10 @@ int main() {
 	while (1) {
 		Menu();
 		string text = "Введите команду: ";
-		int i = getValue(text, 0, 8);
+		int i = getValue(text, 0, 9);
 		switch (i) {
 		case 1: {
 			pipe newPipe;
-			newPipe.id = groupPipe.size();
 			cin >> newPipe;
 			groupPipe.push_back(newPipe);
 			break;
@@ -145,8 +128,9 @@ int main() {
 				int count, i;
 				fin >> count;
 				while (count--) {
-					i = 0;
-					readKCFile(fin, groupKC[i++]);
+					KC newKC;
+					readKCFile(fin, newKC);
+					groupKC.push_back(newKC);
 				}
 			}
 			fin.close();
@@ -213,6 +197,25 @@ int main() {
 			}
 			else {
 				cout << "КС не существует\n";
+			}
+			break;
+		}
+		case 9: {
+			if (getValue("Удалить трубу - 1, удалить КС - 2", 1, 2) == 1) {
+				if (groupPipe.size() != 0) {
+					deleteObj(groupPipe);
+				}
+				else {
+					cout << "Труб не существует" << endl;
+				}
+			}
+			else {
+				if (groupKC.size() != 0) {
+					deleteObj(groupKC);
+				}
+				else {
+					cout << "KC не существует" << endl;
+				}
 			}
 			break;
 		}
