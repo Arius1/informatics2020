@@ -43,8 +43,20 @@ void Menu() {
 		<< "7. Изменить статус ремонта трубы\n"
 		<< "8. Изменить количество работающих цехов\n"
 		<< "9. Удалить объект\n"
+		<< "10. Найти объект\n"
 		<< "\n"
 		<< "0. Выход\n";
+}
+vector <int> findPipeByID(const vector <pipe>& group, int id) {
+	vector <int> result;
+	int i = 0;
+	for (auto& p : group) {
+		if (p.id == id) {
+			result.push_back(i);
+		}
+		i++;
+	}
+	return result;
 }
 
 int main() {
@@ -57,7 +69,7 @@ int main() {
 	while (1) {
 		Menu();
 		string text = "Введите команду: ";
-		int i = getValue(text, 0, 9);
+		int i = getValue(text, 0, 10);
 		switch (i) {
 		case 1: {
 			pipe newPipe;
@@ -162,8 +174,10 @@ int main() {
 			break;
 		}
 		case 9: {
+			int id;
 			if (getValue("Удалить трубу - 1, удалить КС - 2", 1, 2) == 1) {
 				if (groupPipe.size() != 0) {
+
 					deleteObj(groupPipe);
 				}
 				else {
@@ -177,6 +191,12 @@ int main() {
 				else {
 					cout << "KC не существует" << endl;
 				}
+			}
+			break;
+		}
+		case 10: {
+			for (int i : findPipeByID(groupPipe, 1)) {
+				cout << groupPipe[i];
 			}
 			break;
 		}

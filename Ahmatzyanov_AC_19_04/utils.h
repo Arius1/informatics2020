@@ -24,6 +24,29 @@ vec& select(std::vector <vec>& group) {
 }
 template <class vec>
 void deleteObj(std::vector <vec>& group) {
-	int i = getValue("Введите номер объекта", 1u, group.size())-1;
+	int i = getValue("Введите номер объекта", 1u, group.size()) - 1;
 	group.erase(group.begin() + i);
 }
+
+//template <class vec>
+//int findObjByID(const std::vector <vec>& group, int id) {
+//	for (auto& obj : group) {
+//		if (obj.id == id) {
+//			return group;
+//		}
+//		else {
+//			return -1;
+//		}
+//	}
+//}
+//vector <int> findPipeByID(const vector <pipe>& group, int id) {
+//	vector <int> result;
+//	int i = 0;
+//	for (auto& p : group) {
+//		if (p.id == id) {
+//			result.push_back(i);
+//		}
+//		i++;
+//	}
+//	return result;
+//}

@@ -3,8 +3,11 @@
 
 using namespace std;
 
+int pipe::maxId = 0;
+
 ostream& operator << (ostream& out, const pipe& p) {
-	cout << "\nДлина трубы: " << p.length << endl
+	cout << "id трубы: " << p.id << endl
+		<< "Длина трубы: " << p.length << endl
 		<< "Диаметр трубы: " << p.diameter << endl
 		<< "Статус: Труба" << (p.repairStatus == true ? " в ремонте" : " работает") << endl;
 	return out;
@@ -17,4 +20,9 @@ istream& operator >> (istream& in, pipe& p) {
 	p.diameter = getValue("\nВведите диаметр трубы : ", 0, 5000);
 
 	return in;
+}
+
+pipe::pipe()
+{
+	id = maxId++;
 }
