@@ -1,26 +1,10 @@
 ﻿#include <iostream>
 #include <string>
 #include <fstream>
-
+#include <vector>
+#include "KC.h"
+#include "pipe.h"
 using namespace std;
-
-struct pipe {
-
-	string id = " ";
-	double length = 0;
-	int diameter = 0;
-	bool repairStatus = false;
-};
-
-struct KC {
-	
-	string id = " ";
-	string Name = " "; 
-	int workshopCount = 0;
-	int workingWorkshopCount = 0;
-	double efficiency = 0;
-
-};
 
 template <typename T>
 
@@ -35,54 +19,44 @@ T getValue(string text, T border1, T border2) {
 	return value;
 }
 
-pipe createPipe() {
-	
-	pipe p;
-	cout << "Считывание данных для трубы:" << endl;
-	
-	p.id = " ";
 
-	p.length = getValue("\nВведите длину трубы: ", 0, 10000);
-
-	p.diameter = getValue("\nВведите диаметр трубы : ", 0, 5000);
-
-	return p;
+ostream& operator << (ostream& out, const pipe& p) {
+	cout << "\nДлина трубы: " << p.length << endl
+	 << "Диаметр трубы: " << p.diameter << endl
+	 << "Статус: Труба" << (p.repairStatus == true ? " в ремонте" : " работает") << endl;
+	return out;
 }
 
-KC create_KC() {
-	
-	KC newKC;
-	cout << "Считывание данных для КС: " << endl;
+istream& operator >> (istream& in, pipe& p) {
 
-	newKC.id = " ";
+	cout << "Считывание данных для трубы:" << endl;
+	p.length = getValue("\nВведите длину трубы: ", 0, 10000);
+	p.diameter = getValue("\nВведите диаметр трубы : ", 0, 5000);
+
+	return in;
+}
+
+ostream& operator << (ostream& out, const KC& kc) {
+	cout << "\nНазвание КС: " << kc.Name << endl
+	<< "Кол-во цехов: " << kc.workingWorkshopCount << " / " << kc.workshopCount << endl
+	<< "Эффективность КС: " << kc.efficiency << endl;
+
+	return out;
+}
+
+istream& operator >> (istream& in, KC& newKC) {
+
+	cout << "Считывание данных для КС: " << endl;
 
 	cout << "\nВведите название КС: ";
 	cin.get();
 	getline(cin, newKC.Name);
 
 	newKC.workshopCount = getValue("\nВведите кол-во станций: ", 0, 1000);
-
 	newKC.workingWorkshopCount = getValue("\nВведите кол-во работающих станций: ", 0, 1000);
-
 	newKC.efficiency = getValue("\nВведите эффективность станции: ", 0, 100);
 
-	return newKC;
-}
-
-void printPipe(pipe n) {
-
-	cout << "\nДлина трубы: " << n.length << endl;
-	cout << "Диаметр трубы: " << n.diameter << endl;
-	cout << "Статус: Труба" << (n.repairStatus == true ? " в ремонте" : " работает") << endl;
-
-}
-
-void printKC(KC n) {
-
-	cout << "\nНазвание КС: " << n.Name << endl;
-	cout << "Кол-во цехов: " << n.workingWorkshopCount << " / " << n.workshopCount << endl;
-	cout << "Эффективность КС: " << n.efficiency << endl;
-
+	return in;
 }
 
 void changePipeRepairStatus(bool &repair_status, bool status) {
@@ -96,36 +70,30 @@ int changeKCWorkingWorkshopCount(KC changeKC) {
 	changeKC.workingWorkshopCount += count;
 	return changeKC.workingWorkshopCount;
 }
-void readFile(KC& newKC, pipe& newPipe) {
-
-	ifstream fin;
-	fin.open("data.txt", ios::in);
-	if (fin.is_open()) {
-		fin >> newPipe.length >> newPipe.diameter >> newKC.Name >> newKC.workshopCount >> newKC.workingWorkshopCount >> newKC.efficiency;
-		fin.close();
-	}
+void readPipeFile(ifstream& fin, pipe& newPipe) {
+	fin >> newPipe.length >> newPipe.diameter;
 }
-void printPipeFile(const pipe writePipe) {
-	ofstream fout;
-	fout.open("data.txt", ios::app);
-	if (fout.is_open()) {
-		fout << writePipe.length << "\t" << writePipe.diameter << endl;
-		fout.close();
-	}
+void readKCFile(ifstream& fin, KC& newKC) {
+	fin >> newKC.Name >> newKC.workshopCount >> newKC.workingWorkshopCount >> newKC.efficiency;
+}
+void printPipeFile(ofstream& fout, const pipe writePipe) {
+	fout << writePipe.length << "\t" << writePipe.diameter << endl;
 }
 
-void printKCFile( const KC writeKC) {
-	ofstream fout;
-	fout.open("data.txt", ios::app);
-	if (fout.is_open()) {
-		fout <<  writeKC.Name << "\t" << writeKC.workshopCount << "\t" << writeKC.workingWorkshopCount << "\t" << writeKC.efficiency << endl;
-		fout.close();
-	}
+void printKCFile(ofstream& fout, const KC writeKC) {
+	fout <<  writeKC.Name << "\t" << writeKC.workshopCount << "\t" << writeKC.workingWorkshopCount << "\t" << writeKC.efficiency << endl;
 }
+
+template <class vec>
+vec& select(vector <vec>& group) {
+	unsigned int index = getValue("Введите номер объекта: ", 1u, group.size());
+	return group[index-1];
+}
+
 
 void Menu() {
 	cout << "\n1. Создать новую трубу\n"
-		<< "2. Создать новый КС\n"
+		<< "2. Создать новую КС\n"
 		<< "3. Считать трубу и КС из файла\n"
 		<< "4. Вывод трубы и КС в файл \n"
 		<< "5. Вывести трубу\n"
@@ -140,8 +108,8 @@ int main() {
 
 	setlocale(LC_ALL, "Russian");
 
-	pipe pipe1;
-	KC kc1;
+	vector <pipe> groupPipe;
+	vector <KC> groupKC;
 
 	while (1) {
 		Menu();
@@ -149,56 +117,89 @@ int main() {
 		int i = getValue(text, 0, 8);
 		switch (i) {
 		case 1: {
-			pipe1 = createPipe();
+			pipe newPipe;
+			newPipe.id = groupPipe.size();
+			cin >> newPipe;
+			groupPipe.push_back(newPipe);
 			break;
 		}
 		case 2: {
-			kc1 = create_KC();
+			KC newKC;
+			cin >> newKC;
+			groupKC.push_back(newKC);
 			break;
 		}
 		case 3: {
-			readFile(kc1, pipe1);
+			ifstream fin;
+			fin.open("data.txt", ios::in);
+			if (fin.is_open()) {
+				int count;
+				fin >> count;
+				while (count--) {
+					pipe newPipe;
+					readPipeFile(fin, newPipe);
+					groupPipe.push_back(newPipe);
+				}
+			}
+			if (fin.is_open()) {
+				int count, i;
+				fin >> count;
+				while (count--) {
+					i = 0;
+					readKCFile(fin, groupKC[i++]);
+				}
+			}
+			fin.close();
 			break;
 		}
 		case 4: {
-			if (pipe1.length != 0) {
-				printPipeFile(pipe1);
+			ofstream fout;
+			fout.open("data.txt", ios::app);
+			if (fout.is_open()) {
+				if (groupPipe.size() != 0) {
+					for (pipe p : groupPipe) {
+						printPipeFile(fout, p);
+					}
+				}
+				else {
+					cout << "Труба не существует\n";
+				}
+				if (groupKC.size() != 0) {
+					for (KC kc : groupKC) {
+						printKCFile(fout, kc);
+					}
+				}
+				else {
+					cout << "КС не существует\n";
+				}
 			}
-			else {
-				cout << "Труба\n";
-			}
-			if (kc1.workshopCount != 0) {
-				printKCFile(kc1);
-			}
-			else {
-				cout << "КС не существуют\n";
-			}
+			fout.close();
 			break;
 		}
 		case 5: {
-			if (pipe1.length != 0) {
-				printPipe(pipe1);
-			}	
+			if (groupPipe.size() != 0) {
+				cout << select(groupPipe);
+			}
 			else {
 				cout << "Труба не существует\n";
 			}
 			break;
 		}
-		
+
 		case 6: {
-			if (kc1.workshopCount != 0) {
-				printKC(kc1);
+			if (groupKC.size() != 0) {
+				cout << select(groupKC);
 			}
 			else {
 				cout << "КС не существует\n";
 			}
 			break;
 		}
-		
+
 		case 7: {
-			if (pipe1.length != 0) {
+			if (groupPipe.size() != 0) {
 				bool j = true;
-				changePipeRepairStatus(pipe1.repairStatus, j);
+				changePipeRepairStatus(select(groupPipe).repairStatus, j);
 			}
 			else {
 				cout << "Труба не существует\n";
@@ -206,9 +207,9 @@ int main() {
 			break;
 		}
 		case 8: {
-			if (kc1.workshopCount != 0) {
-				
-				kc1.workingWorkshopCount = changeKCWorkingWorkshopCount(kc1);
+			if (groupKC.size() != 0) {
+				KC changeKC = select(groupKC);
+				changeKC.workingWorkshopCount = changeKCWorkingWorkshopCount(changeKC);
 			}
 			else {
 				cout << "КС не существует\n";
