@@ -22,10 +22,21 @@ vec& select(std::vector <vec>& group) {
 	unsigned int index = getValue("Введите номер объекта: ", 1u, group.size());
 	return group[index - 1];
 }
+
 template <class vec>
 void deleteObj(std::vector <vec>& group) {
-	int i = getValue("Введите номер объекта", 1u, group.size()) - 1;
-	group.erase(group.begin() + i);
+	int id = getValue("Введите id объекта", 0u, 10000u);
+	int i = 0;
+	for (auto& obj : group) {
+		if (obj.id == id) {
+			group.erase(group.begin() + i);
+			std::cout << "Объект с id: " << id << " успешно удален" << std::endl;
+		}
+		i++;
+	}
+	if (i == group.size()) {
+		std::cout << "Такого объекта нет!" << std::endl;
+	}
 }
 
 //template <class vec>
