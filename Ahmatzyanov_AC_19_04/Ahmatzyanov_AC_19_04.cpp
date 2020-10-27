@@ -8,47 +8,6 @@
 
 using namespace std;
 
-
-
-ostream& operator << (ostream& out, const pipe& p) {
-	cout << "\nДлина трубы: " << p.length << endl
-	 << "Диаметр трубы: " << p.diameter << endl
-	 << "Статус: Труба" << (p.repairStatus == true ? " в ремонте" : " работает") << endl;
-	return out;
-}
-
-istream& operator >> (istream& in, pipe& p) {
-
-	cout << "Считывание данных для трубы:" << endl;
-	p.length = getValue("\nВведите длину трубы: ", 0, 10000);
-	p.diameter = getValue("\nВведите диаметр трубы : ", 0, 5000);
-
-	return in;
-}
-
-ostream& operator << (ostream& out, const KC& kc) {
-	cout << "\nНазвание КС: " << kc.Name << endl
-	<< "Кол-во цехов: " << kc.workingWorkshopCount << " / " << kc.workshopCount << endl
-	<< "Эффективность КС: " << kc.efficiency << endl;
-
-	return out;
-}
-
-istream& operator >> (istream& in, KC& newKC) {
-
-	cout << "Считывание данных для КС: " << endl;
-
-	cout << "\nВведите название КС: ";
-	cin.get();
-	getline(cin, newKC.Name);
-
-	newKC.workshopCount = getValue("\nВведите кол-во станций: ", 0, 1000);
-	newKC.workingWorkshopCount = getValue("\nВведите кол-во работающих станций: ", 0, 1000);
-	newKC.efficiency = getValue("\nВведите эффективность станции: ", 0, 100);
-
-	return in;
-}
-
 void changePipeRepairStatus(bool &repair_status, bool status) {
 	repair_status = !repair_status;
 }
@@ -118,6 +77,7 @@ int main() {
 			if (fin.is_open()) {
 				int count;
 				fin >> count;
+				groupPipe.reserve(count);
 				while (count--) {
 					pipe newPipe;
 					readPipeFile(fin, newPipe);
@@ -125,8 +85,9 @@ int main() {
 				}
 			}
 			if (fin.is_open()) {
-				int count, i;
+				int count;
 				fin >> count;
+				groupPipe.reserve(count);
 				while (count--) {
 					KC newKC;
 					readKCFile(fin, newKC);
