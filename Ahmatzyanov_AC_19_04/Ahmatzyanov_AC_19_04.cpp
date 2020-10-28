@@ -8,14 +8,15 @@
 
 using namespace std;
 
-void changePipeRepairStatus(bool &repair_status, bool status) {
+void changePipeRepairStatus(bool& repair_status, bool status) {
 	repair_status = !repair_status;
 }
 
 int changeKCWorkingWorkshopCount(KC changeKC) {
 	int count, border;
 	border = -1 * changeKC.workingWorkshopCount;
-	count = getValue("Введите, сколько цехов вы хотите включить(положительное число)/выключить(отрицательное число): ", border, changeKC.workshopCount - changeKC.workingWorkshopCount);
+	count = getIntValue("Введите, сколько цехов вы хотите включить(положительное число)/выключить(отрицательное число): ",
+		border, changeKC.workshopCount - changeKC.workingWorkshopCount);
 	changeKC.workingWorkshopCount += count;
 	return changeKC.workingWorkshopCount;
 }
@@ -40,13 +41,14 @@ void Menu() {
 		<< "4. Вывод трубы и КС в файл \n"
 		<< "5. Вывести трубу\n"
 		<< "6. Вывести КС\n"
-		<< "7. Изменить статус ремонта трубы\n"
-		<< "8. Изменить количество работающих цехов\n"
+		<< "7. Редактировать статус труб\n"
+		<< "8. Редактировать количество работающих станций КС \n"
 		<< "9. Удалить объект\n"
 		<< "10. Найти объект\n"
 		<< "\n"
 		<< "0. Выход\n";
 }
+
 template <typename par, class vec>
 using Filter = bool(*)(const vec& object, par parameter);
 
@@ -59,8 +61,9 @@ bool checkByStatus(const pipe& p, bool parameter) {
 bool checkByWorkingPercent(const KC& kc, int parameter) {
 	return (kc.workingWorkshopCount/kc.workshopCount)*100 >= parameter;
 }
-bool checkPipeByID(const pipe& p, int parameter) {
-	return p.id == parameter;
+template <class vec>
+bool checkPipeByID(const vec& obj, int parameter) {
+	return obj.id == parameter;
 }
 template <typename obj, class vec>
 vector <int> findObjectByFilter(const vector <vec>& group, Filter <obj, vec> f,  obj parameter) {
@@ -85,7 +88,7 @@ int main() {
 	while (1) {
 		Menu();
 		string text = "Введите команду: ";
-		int i = getValue(text, 0, 10);
+		int i = getIntValue(text, 0, 10);
 		switch (i) {
 		case 1: {
 			pipe newPipe;
@@ -170,12 +173,35 @@ int main() {
 		}
 
 		case 7: {
-			if (groupPipe.size() != 0) {
-				bool j = true;
-				changePipeRepairStatus(select(groupPipe).repairStatus, j);
+			
+			bool status = getIntValue("Введите статус ремонта для поиска: ", 0, 1);
+			vector <int> result;
+			cout << "Были найдены трубы с id:" << endl;
+			for (int i : findObjectByFilter(groupPipe, checkByStatus, status)) {
+				result.push_back(i);
+				cout << i << endl;
+			}
+			if (result.size() != 0) {
+				int j = getIntValue("Выберите способ замены статуса: \n 1) Для всех найденных \n 2) Для определенных ", 1u, 2u);
+				switch (j) {
+				case 1: {
+					for (auto& i : result) {
+						changePipeRepairStatus(groupPipe[result[i]].repairStatus, !status);
+					}
+					break;
+				}
+				case 2: {
+					int border = getIntValue("Введите количество объектов редактирования", 1u, result.size());
+					for (int i = 1; i <= border; i++ ) {
+						int id = getIntValue("Введите ID: ", result[0], result[result.size()-1]);
+						changePipeRepairStatus(groupPipe[id].repairStatus, !status);
+					}
+					break;
+				}
+				}
 			}
 			else {
-				cout << "Труба не существует\n";
+				cout << "Таких труб не существует\n";
 			}
 			break;
 		}
@@ -187,10 +213,11 @@ int main() {
 			else {
 				cout << "КС не существует\n";
 			}
+			
 			break;
 		}
 		case 9: {
-			if (getValue("Удалить трубу - 1, удалить КС - 2", 1, 2) == 1) {
+			if (getIntValue("Удалить трубу - 1, удалить КС - 2", 1, 2) == 1) {
 				if (groupPipe.size() != 0) {
 
 					deleteObj(groupPipe);
@@ -210,10 +237,10 @@ int main() {
 			break;
 		}
 		case 10: {
-			int j = getValue("Введите фильтр поиска: \n 1. ID трубы \n 2. Имя КС \n 3.Процент работающих станций \n 4. Статус ремонта трубы", 1, 4);
+			int j = getIntValue("Введите фильтр поиска: \n 1. ID трубы \n 2. Имя КС \n 3. Процент работающих станций \n 4. Статус ремонта трубы", 1, 4);
 				switch (j) {
 				case 1: {
-					int id = getValue("Введите id объекта", 0u, 10000u);
+					int id = getIntValue("Введите id объекта", 0u, 10000u);
 					for (int i : findObjectByFilter(groupPipe, checkPipeByID, id))
 						cout << groupPipe[i];
 					break;
@@ -228,22 +255,19 @@ int main() {
 					break;
 				}
 				case 3: {
-					int perc = getValue("Введите процент действующих цехов КС для поиска: ", 0, 100);
+					int perc = getIntValue("Введите процент действующих цехов КС для поиска: ", 0, 100);
 					for (int i : findObjectByFilter (groupKC, checkByWorkingPercent, perc ))
 						cout << groupKC[i];
 					break;
 				}
 				case 4: {
-					bool status = getValue("Введите статус ремонта для поиска: ", 0, 1);
+					bool status = getIntValue("Введите статус ремонта для поиска: ", 0, 1);
 					for (int i : findObjectByFilter(groupPipe, checkByStatus, status))
 						cout << groupPipe[i];
 					break;
 				}
 			}
 
-			/*for (int i : findByID(groupPipe)) {
-				cout << groupPipe[i];
-			}*/
 			break;
 		}
 		case 0: {

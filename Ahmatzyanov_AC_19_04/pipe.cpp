@@ -16,8 +16,8 @@ ostream& operator << (ostream& out, const pipe& p) {
 istream& operator >> (istream& in, pipe& p) {
 
 	cout << "—читывание данных дл€ трубы:" << endl;
-	p.length = getValue("\n¬ведите длину трубы: ", 0, 10000);
-	p.diameter = getValue("\n¬ведите диаметр трубы : ", 0, 5000);
+	p.length = getDoubleValue("\n¬ведите длину трубы: ", 0, 10000);
+	p.diameter = getIntValue("\n¬ведите диаметр трубы : ", 0, 5000);
 
 	return in;
 }
@@ -26,3 +26,4 @@ pipe::pipe()
 {
 	id = maxId++;
 }
+

@@ -13,9 +13,9 @@ istream& operator >> (istream& in, KC& newKC) {
 	cin.get();
 	getline(cin, newKC.Name);
 
-	newKC.workshopCount = getValue("\n¬ведите кол-во станций: ", 0, 1000);
-	newKC.workingWorkshopCount = getValue("\n¬ведите кол-во работающих станций: ", 0, newKC.workshopCount);
-	newKC.efficiency = getValue("\n¬ведите эффективность станции: ", 0, 100);
+	newKC.workshopCount = getIntValue("\n¬ведите кол-во станций: ", 0, 1000);
+	newKC.workingWorkshopCount = getIntValue("\n¬ведите кол-во работающих станций: ", 0, newKC.workshopCount);
+	newKC.efficiency = getDoubleValue("\n¬ведите эффективность станции: ", 0, 100);
 
 	return in;
 }
