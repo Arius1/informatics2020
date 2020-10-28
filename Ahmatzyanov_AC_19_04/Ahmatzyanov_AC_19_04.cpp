@@ -8,18 +8,7 @@
 
 using namespace std;
 
-void changePipeRepairStatus(bool& repair_status, bool status) {
-	repair_status = !repair_status;
-}
 
-int changeKCWorkingWorkshopCount(KC changeKC) {
-	int count, border;
-	border = -1 * changeKC.workingWorkshopCount;
-	count = getIntValue("Введите, сколько цехов вы хотите включить(положительное число)/выключить(отрицательное число): ",
-		border, changeKC.workshopCount - changeKC.workingWorkshopCount);
-	changeKC.workingWorkshopCount += count;
-	return changeKC.workingWorkshopCount;
-}
 void readPipeFile(ifstream& fin, pipe& newPipe) {
 	fin >> newPipe.length >> newPipe.diameter;
 }
@@ -29,7 +18,6 @@ void readKCFile(ifstream& fin, KC& newKC) {
 void printPipeFile(ofstream& fout, const pipe writePipe) {
 	fout << writePipe.length << "\t" << writePipe.diameter << endl;
 }
-
 void printKCFile(ofstream& fout, const KC writeKC) {
 	fout <<  writeKC.Name << "\t" << writeKC.workshopCount << "\t" << writeKC.workingWorkshopCount << "\t" << writeKC.efficiency << endl;
 }
@@ -186,7 +174,7 @@ int main() {
 				switch (j) {
 				case 1: {
 					for (auto& i : result) {
-						changePipeRepairStatus(groupPipe[result[i]].repairStatus, !status);
+						groupPipe[result[i]].changePipeRepairStatus();
 					}
 					break;
 				}
@@ -194,7 +182,7 @@ int main() {
 					int border = getIntValue("Введите количество объектов редактирования", 1u, result.size());
 					for (int i = 1; i <= border; i++ ) {
 						int id = getIntValue("Введите ID: ", result[0], result[result.size()-1]);
-						changePipeRepairStatus(groupPipe[id].repairStatus, !status);
+						groupPipe[id].changePipeRepairStatus();
 					}
 					break;
 				}
@@ -207,8 +195,7 @@ int main() {
 		}
 		case 8: {
 			if (groupKC.size() != 0) {
-				KC changeKC = select(groupKC);
-				changeKC.workingWorkshopCount = changeKCWorkingWorkshopCount(changeKC);
+				select(groupKC).changeKCWorkingWorkshopCount();
 			}
 			else {
 				cout << "КС не существует\n";

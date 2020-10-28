@@ -12,6 +12,8 @@ public:
 	bool repairStatus = false;
 
 	pipe();
+	
+	void changePipeRepairStatus();
 
 	friend std::ostream& operator << (std::ostream& out, const pipe& p);
 	friend std::istream& operator >> (std::istream& in, pipe& p);

@@ -12,6 +12,8 @@ public:
 
 	KC();
 
+	void changeKCWorkingWorkshopCount();
+
 	friend std::istream& operator >> (std::istream& in, KC& newKC);
 	friend std::ostream& operator<<(std::ostream& out, const KC& kc);
 };

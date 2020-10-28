@@ -27,3 +27,8 @@ pipe::pipe()
 	id = maxId++;
 }
 
+void pipe::changePipeRepairStatus()
+{
+	repairStatus = !repairStatus;
+}
+

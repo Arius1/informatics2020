@@ -34,3 +34,10 @@ KC::KC()
 {
 	id = maxId++;
 }
+
+void KC::changeKCWorkingWorkshopCount()
+{
+	int count;
+	count = getIntValue("¬ведите количество работающих цехов: ", 0, workshopCount);
+	workingWorkshopCount = count;
+}
