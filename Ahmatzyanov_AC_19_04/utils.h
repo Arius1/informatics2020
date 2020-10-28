@@ -39,17 +39,17 @@ void deleteObj(std::vector <vec>& group) {
 	}
 }
 
-
-template <class vec>
-std::vector <int> findByID(std::vector <vec>& group) {
-	std::vector <int> result;
-	int id = getValue("Введите id объекта", 0u, 10000u);
-	int i = 0;
-	for (auto& p : group) {
-		if (p.id == id) {
-			result.push_back(i);
-		}
-		i++;
-	}
-	return result;
-}
+// ------Для поиска труб и КС по id------
+//template <class vec> 
+//std::vector <int> findByID(std::vector <vec>& group) {
+//	std::vector <int> result;
+//	int id = getValue("Введите id объекта", 0u, 10000u);
+//	int i = 0;
+//	for (auto& p : group) {
+//		if (p.id == id) {
+//			result.push_back(i);
+//		}
+//		i++;
+//	}
+//	return result;
+//}

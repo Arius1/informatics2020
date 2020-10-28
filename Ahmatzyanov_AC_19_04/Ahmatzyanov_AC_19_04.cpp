@@ -56,10 +56,12 @@ bool checkByName(const KC& kc, string parameter) {
 bool checkByStatus(const pipe& p, bool parameter) {
 	return p.repairStatus == parameter;
 }
-bool checkByWorkingPercent(const KC& kc, double parameter) {
-	return kc.workingWorkshopCount/kc.workshopCount >= parameter;
+bool checkByWorkingPercent(const KC& kc, int parameter) {
+	return (kc.workingWorkshopCount/kc.workshopCount)*100 >= parameter;
 }
-
+bool checkPipeByID(const pipe& p, int parameter) {
+	return p.id == parameter;
+}
 template <typename obj, class vec>
 vector <int> findObjectByFilter(const vector <vec>& group, Filter <obj, vec> f,  obj parameter) {
 	vector <int> result;
@@ -208,9 +210,40 @@ int main() {
 			break;
 		}
 		case 10: {
-			for (int i : findByID(groupPipe)) {
-				cout << groupPipe[i];
+			int j = getValue("Введите фильтр поиска: \n 1. ID трубы \n 2. Имя КС \n 3.Процент работающих станций \n 4. Статус ремонта трубы", 1, 4);
+				switch (j) {
+				case 1: {
+					int id = getValue("Введите id объекта", 0u, 10000u);
+					for (int i : findObjectByFilter(groupPipe, checkPipeByID, id))
+						cout << groupPipe[i];
+					break;
+				}
+				case 2: {
+					cout << "\nВведите название КС: ";
+					string name;
+					cin.get();
+					getline(cin, name);
+					for (int i : findObjectByFilter <string> (groupKC, checkByName, name))
+						cout << groupKC[i];
+					break;
+				}
+				case 3: {
+					int perc = getValue("Введите процент действующих цехов КС для поиска: ", 0, 100);
+					for (int i : findObjectByFilter (groupKC, checkByWorkingPercent, perc ))
+						cout << groupKC[i];
+					break;
+				}
+				case 4: {
+					bool status = getValue("Введите статус ремонта для поиска: ", 0, 1);
+					for (int i : findObjectByFilter(groupPipe, checkByStatus, status))
+						cout << groupPipe[i];
+					break;
+				}
 			}
+
+			/*for (int i : findByID(groupPipe)) {
+				cout << groupPipe[i];
+			}*/
 			break;
 		}
 		case 0: {
