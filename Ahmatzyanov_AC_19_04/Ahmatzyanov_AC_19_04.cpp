@@ -24,7 +24,7 @@ void printCount(ofstream& fout, int count) {
 	fout << count << endl;
 }
 void printMaxId(ofstream& fout, int maxId) {
-	fout << maxId << endl;
+	fout << maxId-1 << endl;
 }
 
 void statusFilter(int count) {
@@ -116,6 +116,7 @@ int main() {
 					groupPipe.push_back(newPipe);
 				}
 				fin >> groupPipe[buffer-1].maxId;
+				groupPipe[buffer - 1].maxId++;
 			}
 			if (fin.is_open()) {
 				int count, buffer;
@@ -128,6 +129,7 @@ int main() {
 					groupKC.push_back(newKC);
 				}
 				fin >> groupKC[buffer - 1].maxId;
+				groupKC[buffer - 1].maxId++;
 			}
 			fin.close();
 			break;
