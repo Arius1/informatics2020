@@ -30,14 +30,14 @@ double getDoubleValue(std::string text, T border1, T border2) {
 	return value;
 }
 
-template <class vec>
-vec& select(std::vector <vec>& group) {
+template <class className>
+className& select(std::vector <className>& group) {
 	unsigned int index = getIntValue("Введите номер объекта: ", 1u, group.size());
 	return group[index - 1];
 }
 
-template <class vec>
-void deleteObj(std::vector <vec>& group) {
+template <class className>
+void deleteObj(std::vector <className>& group) {
 	int id = getIntValue("Введите id объекта", 0u, 10000u);
 	int i = 0;
 	for (auto& obj : group) {
@@ -51,18 +51,3 @@ void deleteObj(std::vector <vec>& group) {
 		std::cout << "Такого объекта нет!" << std::endl;
 	}
 }
-
- //------Для поиска труб и КС по id------
-//template <class vec> 
-//std::vector <int> findByID(std::vector <vec>& group) {
-//	std::vector <int> result;
-//	int id = getIntValue("Введите id объекта", 0u, 10000u);
-//	int i = 0;
-//	for (auto& p : group) {
-//		if (p.id == id) {
-//			result.push_back(i);
-//		}
-//		i++;
-//	}
-//	return result;
-//}
