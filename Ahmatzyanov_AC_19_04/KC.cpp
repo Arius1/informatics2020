@@ -1,5 +1,6 @@
 #include "KC.h"
 #include "utils.h"
+#include <fstream>
 
 using namespace std;
 
@@ -33,6 +34,21 @@ ostream& operator<<(ostream& out, const KC& kc)
 KC::KC()
 {
 	id = maxId++;
+}
+
+void KC::readKCFile(std::ifstream& fin)
+{
+	fin >> id >> Name >> workshopCount >> workingWorkshopCount >> efficiency;
+}
+
+void KC::printKCFile(std::ofstream& fout)
+{
+		fout << id << "\t" << Name << "\t" <<workshopCount << "\t" << workingWorkshopCount << "\t" << efficiency << endl;
+}
+
+void KC::printMaxId(std::ofstream& fout)
+{
+	fout << maxId - 1 << std::endl;
 }
 
 void KC::changeKCWorkingWorkshopCount()

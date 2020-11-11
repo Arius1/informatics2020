@@ -15,6 +15,10 @@ public:
 	
 	void changePipeRepairStatus();
 
+	void readPipeFile(std::ifstream& fin);
+	void printPipeFile(std::ofstream& fout);
+	void printMaxId(std::ofstream& fout);
+
 	friend std::ostream& operator << (std::ostream& out, const pipe& p);
 	friend std::istream& operator >> (std::istream& in, pipe& p);
 };

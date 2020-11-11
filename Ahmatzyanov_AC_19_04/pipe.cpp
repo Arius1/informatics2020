@@ -1,5 +1,6 @@
 #include "pipe.h"
 #include "utils.h"
+#include <fstream>
 
 using namespace std;
 
@@ -30,5 +31,20 @@ pipe::pipe()
 void pipe::changePipeRepairStatus()
 {
 	repairStatus = !repairStatus;
+}
+
+void pipe::readPipeFile(ifstream& fin)
+{
+	fin >> id >> length >> diameter;
+}
+
+void pipe::printPipeFile(std::ofstream& fout)
+{
+	fout << id << "\t" << length << "\t" << diameter << endl;
+}
+
+void pipe::printMaxId(std::ofstream& fout)
+{
+	fout << maxId - 1 << std::endl;
 }
 

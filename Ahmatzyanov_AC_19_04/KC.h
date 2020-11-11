@@ -11,7 +11,9 @@ public:
 	double efficiency = 0;
 
 	KC();
-
+	void readKCFile(std::ifstream& fin);
+	void printKCFile(std::ofstream& fout);
+	void printMaxId(std::ofstream& fout);
 	void changeKCWorkingWorkshopCount();
 
 	friend std::istream& operator >> (std::istream& in, KC& newKC);

@@ -7,25 +7,10 @@
 #include "utils.h"
 
 using namespace std;
-
-void readPipeFile(ifstream& fin, pipe& newPipe) {
-	fin >> newPipe.id >> newPipe.length >> newPipe.diameter;
-}
-void readKCFile(ifstream& fin, KC& newKC) {
-	fin >> newKC.id >> newKC.Name >> newKC.workshopCount >> newKC.workingWorkshopCount >> newKC.efficiency;
-}
-void printPipeFile(ofstream& fout, const pipe writePipe) {
-	fout << writePipe.id << "\t" << writePipe.length << "\t" << writePipe.diameter << endl;
-}
-void printKCFile(ofstream& fout, const KC writeKC) {
-	fout << writeKC.id << "\t" << writeKC.Name << "\t" << writeKC.workshopCount << "\t" << writeKC.workingWorkshopCount << "\t" << writeKC.efficiency << endl;
-}
-void printCount(ofstream& fout, int count) {
-	fout << count << endl;
-}
-void printMaxId(ofstream& fout, int maxId) {
-	fout << maxId-1 << endl;
-}
+//убрать fout в классы //done
+//дозапись в векторы из файла убрать чисткой //done
+//count убрать //done
+//исправить последовательность типов //done (пришлось явно указать тип класса)
 
 void statusFilter(int count) {
 	if (count == -1) {
@@ -33,7 +18,7 @@ void statusFilter(int count) {
 	}
 }
 
-template <typename par, class className>
+template <class className, typename par>
 using Filter = bool(*)(const className& object, par parameter);
 
 bool checkByName(const KC& kc, string parameter) {
@@ -46,12 +31,12 @@ bool checkByWorkingPercent(const KC& kc, double parameter) {
 	return (((double)kc.workingWorkshopCount / (double)kc.workshopCount) * 100) >= parameter;
 }
 template <class className>
-bool checkPipeByID(const className& obj, int parameter) {
+bool checkByID(const className& obj, int parameter) {
 	return obj.id == parameter;
 }
 
-template <typename obj, class className>
-vector <int> findObjectByFilter(const vector <className>& group, Filter <obj, className> f, obj parameter) {
+template <class className, typename T>
+vector <int> findObjectByFilter(const vector <className>& group, Filter <className, T> f, T parameter) {
 	vector <int> result;
 	int i = 0;
 	for (auto& p : group) {
@@ -103,6 +88,8 @@ int main() {
 			break;
 		}
 		case 3: {
+			groupPipe.clear();
+			groupKC.clear();
 			ifstream fin;
 			fin.open("data.txt", ios::in);
 			if (fin.is_open()) {
@@ -112,7 +99,7 @@ int main() {
 				groupPipe.reserve(count);
 				while (count--) {
 					pipe newPipe;
-					readPipeFile(fin, newPipe);
+					newPipe.readPipeFile(fin);
 					groupPipe.push_back(newPipe);
 				}
 				fin >> groupPipe[buffer-1].maxId;
@@ -125,7 +112,7 @@ int main() {
 				groupPipe.reserve(count);
 				while (count--) {
 					KC newKC;
-					readKCFile(fin, newKC);
+					newKC.readKCFile(fin);
 					groupKC.push_back(newKC);
 				}
 				fin >> groupKC[buffer - 1].maxId;
@@ -139,21 +126,21 @@ int main() {
 			fout.open("data.txt", ios::out);
 			if (fout.is_open()) {
 				if (groupPipe.size() != 0) {
-					printCount(fout, groupPipe.size());
+					fout << groupPipe.size() << endl;
 					for (pipe p : groupPipe) {
-						printPipeFile(fout, p);
+						p.printPipeFile(fout);
 					}
-					printMaxId(fout, groupPipe[groupPipe.size() - 1].maxId);
+					groupPipe[groupPipe.size() - 1].printMaxId(fout);
 				}
 				else {
 					cout << "Труба не существует\n";
 				}
 				if (groupKC.size() != 0) {
-					printCount(fout, groupKC.size());
+					fout << groupKC.size() << endl;
 					for (KC kc : groupKC) {
-						printKCFile(fout, kc);
+						kc.printKCFile(fout);
 					}
-					printMaxId(fout, groupKC[groupKC.size()-1].maxId);
+					groupKC[groupKC.size() - 1].printMaxId(fout);
 				}
 				else {
 					cout << "КС не существует\n";
@@ -249,10 +236,9 @@ int main() {
 			int j = getIntValue("Введите фильтр поиска: \n 1. ID трубы \n 2. Имя КС \n 3. Процент работающих станций \n 4. Статус ремонта трубы", 1, 4);
 				switch (j) {
 				case 1: {
-					/*search("Введите id объекта", 0u, 10000u, groupPipe, checkPipeByID);*/
 					int count = -1;
 					int id = getIntValue("Введите id объекта", 0u, 10000u);
-					for (int i : findObjectByFilter(groupPipe, checkPipeByID, id)) {
+					for (int i : findObjectByFilter(groupPipe, checkByID, id)) {
 						cout << groupPipe[i];
 						count = i;
 					}
@@ -265,7 +251,7 @@ int main() {
 					string name;
 					cin.get();
 					getline(cin, name);
-					for (int i : findObjectByFilter <string>(groupKC, checkByName, name)) {
+					for (int i : findObjectByFilter < KC ,string>(groupKC, checkByName, name)) {
 						cout << groupKC[i];
 						count = i;
 					}
@@ -310,14 +296,3 @@ int main() {
 
 	return 0;
 }
-// не заработало
-//template <class className, typename T>
-//void search(string text, int border1, int border2, const vector <className>& group, Filter <T, className> filter) {
-//	int count = -1;
-//	bool parameter = getIntValue(text, border1, border2);
-//	for (int i : findObjectByFilter(group, filter, parameter)) {
-//		cout << group[i];
-//		count = i;
-//	}
-//	statusFilter(count);
-//}
