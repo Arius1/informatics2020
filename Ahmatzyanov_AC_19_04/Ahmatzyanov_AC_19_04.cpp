@@ -12,7 +12,7 @@ using namespace std;
 //дозапись в векторы из файла убрать чисткой //done
 //count убрать //done
 //исправить последовательность типов //done (пришлось явно указать тип класса)
-//основа теории по unorderedmap: http://espressocode.top/unordered_map-in-cpp-stl/
+//основа теории по unorderedmap: https://www.cplusplus.com/reference/unordered_map/unordered_map/
 
 void statusFilter(int count) {
 	if (count == -1) {
@@ -114,6 +114,7 @@ int main() {
 				while (count--) {
 					KC newKC;
 					newKC.readKCFile(fin);
+					cout << newKC.id;
 					groupKC.emplace(newKC.id, newKC);
 				}
 				int max;

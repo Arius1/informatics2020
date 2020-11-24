@@ -34,13 +34,16 @@ double getDoubleValue(std::string text, T border1, T border2) {
 
 template <class className>
 className& select(std::unordered_map <int ,className>& group) {
-	unsigned int index = getIntValue("Введите id объекта: ", 0u, 10000u);
-	std::cout << group.size() <<std::endl;
-	if (group.find(index) != group.end()) {
-		return group[index];
-	}
-	else {
-		std::cout << "Ошибка \n";
+	bool check = false;
+	while (!check) {
+		unsigned int index = getIntValue("Введите id объекта: ", 0u, 10000u);
+		if (group.find(index) != group.end()) {
+			return group[index];
+			check = true;
+		}
+		else {
+			std::cout << "Ошибка! Такого объекта нет! \n";
+		}
 	}
 }
 
