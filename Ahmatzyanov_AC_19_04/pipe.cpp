@@ -26,6 +26,7 @@ istream& operator >> (istream& in, pipe& p) {
 pipe::pipe()
 {
 	id = maxId++;
+	cout << "+ \n";
 }
 
 void pipe::changePipeRepairStatus()
@@ -35,12 +36,12 @@ void pipe::changePipeRepairStatus()
 
 void pipe::readPipeFile(ifstream& fin)
 {
-	fin >> id >> length >> diameter;
+	fin >> id >> length >> diameter >> repairStatus;
 }
 
 void pipe::printPipeFile(std::ofstream& fout)
 {
-	fout << id << "\t" << length << "\t" << diameter << endl;
+	fout << id << "\t" << length << "\t" << diameter << repairStatus << endl;
 }
 
 void pipe::printMaxId(std::ofstream& fout)

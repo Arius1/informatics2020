@@ -5,6 +5,7 @@
 #include <vector>
 #include "KC.h"
 #include "pipe.h"
+#include <unordered_map>
 
 template <typename T>
 int getIntValue(std::string text, T border1, T border2) {
@@ -32,23 +33,25 @@ double getDoubleValue(std::string text, T border1, T border2) {
 }
 
 template <class className>
-className& select(std::vector <className>& group) {
-	unsigned int index = getIntValue("Введите номер объекта: ", 1u, group.size());
-	return group[index - 1];
+className& select(std::unordered_map <int ,className>& group) {
+	unsigned int index = getIntValue("Введите id объекта: ", 0u, 10000u);
+	std::cout << group.size() <<std::endl;
+	if (group.find(index) != group.end()) {
+		return group[index];
+	}
+	else {
+		std::cout << "Ошибка \n";
+	}
 }
 
 template <class className>
-void deleteObj(std::vector <className>& group) {
-	int id = getIntValue("Введите id объекта", 0u, 10000u);
-	int i = 0;
-	for (auto& obj : group) {
-		if (obj.id == id) {
-			group.erase(group.begin() + i);
-			std::cout << "Объект с id: " << id << " успешно удален" << std::endl;
-		}
-		i++;
+void deleteObj(std::unordered_map <int, className>& group) {
+	int id = getIntValue("Введите id объекта", 0u, group.size());
+	if (group.find(id) != group.end()) {
+		group.erase(id);
+		std::cout << "Объект с id: " << id << " успешно удален" << std::endl;
 	}
-	if (i == group.size()) {
+	else {
 		std::cout << "Такого объекта нет!" << std::endl;
 	}
 }

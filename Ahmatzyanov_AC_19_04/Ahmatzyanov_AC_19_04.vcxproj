@@ -142,7 +142,6 @@
     <ClCompile Include="Ahmatzyanov_AC_19_04.cpp" />
     <ClCompile Include="KC.cpp" />
     <ClCompile Include="pipe.cpp" />
-    <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="KC.h" />
