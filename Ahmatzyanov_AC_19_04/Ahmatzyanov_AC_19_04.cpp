@@ -139,7 +139,7 @@ int main() {
 				for (auto p : groupPipe) {
 					p.second.printPipeFile(fout);
 				}
-				fout << pipe::maxId;
+				fout << pipe::maxId << endl;
 
 				fout << groupKC.size() << endl;
 				for (auto kc : groupKC) {
