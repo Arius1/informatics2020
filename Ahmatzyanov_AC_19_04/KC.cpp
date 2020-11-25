@@ -46,10 +46,6 @@ void KC::printKCFile(std::ofstream& fout)
 		fout << id << "\t" << Name << "\t" <<workshopCount << "\t" << workingWorkshopCount << "\t" << efficiency << endl;
 }
 
-void KC::printMaxId(std::ofstream& fout)
-{
-	fout << maxId - 1 << std::endl;
-}
 
 void KC::changeKCWorkingWorkshopCount()
 {

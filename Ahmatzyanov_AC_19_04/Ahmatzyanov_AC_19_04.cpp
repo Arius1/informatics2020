@@ -8,17 +8,8 @@
 #include <unordered_map>
 
 using namespace std;
-//убрать fout в классы //done
-//дозапись в векторы из файла убрать чисткой //done
-//count убрать //done
-//исправить последовательность типов //done (пришлось явно указать тип класса)
+//добавить задание имени файла
 //основа теории по unorderedmap: https://www.cplusplus.com/reference/unordered_map/unordered_map/
-
-void statusFilter(int count) {
-	if (count == -1) {
-		cout << "Таких объектов не существует" << endl;
-	}
-}
 
 template <class className, typename par>
 using Filter = bool(*)(const className& object, par parameter);
@@ -42,12 +33,24 @@ vector <int> findObjectByFilter(const unordered_map<int, className>& group, Filt
 	vector <int> result;
 	for (auto& p : group) {
 		if (f(p.second, parameter)) {
-			result.push_back(p.second.id);
-			cout << p.second.id;
+			result.push_back(p.first);
 		}
 	}
 	return result;
 }
+
+template <class className>
+void searchCout(unordered_map <int, className> group, const vector <int>& result) {
+	if (result.size() > 0) {
+		for (auto i : result) {
+			cout << group[i];
+		}
+	}
+	else {
+		cout << "Таких объектов нет! \n";
+	}
+}
+
 
 void Menu() {
 	cout << "\n1. Создать новую трубу\n"
@@ -77,77 +80,72 @@ int main() {
 		int i = getIntValue(text, 0, 10);
 		switch (i) {
 		case 1: {
-			pipe newPipe;
-			cin >> newPipe;
-			groupPipe.emplace(newPipe.id, newPipe);
+			bool flag = true;
+			while (flag) {
+				pipe newPipe;
+				cin >> newPipe;
+				groupPipe.emplace(newPipe.id, newPipe);
+				check(flag);
+			}
 			break;
 		}
 		case 2: {
-			KC newKC;
-			cin >> newKC;
-			groupKC.emplace(newKC.id, newKC);
+			bool flag = true;
+			while (flag) {
+				KC newKC;
+				cin >> newKC;
+				groupKC.emplace(newKC.id, newKC);
+				check(flag);
+			}
 			break;
 		}
 		case 3: {
 			groupPipe.clear();
 			groupKC.clear();
 			ifstream fin;
-			fin.open("data.txt", ios::in);
+			fin.open(getName(), ios::in);
 			if (fin.is_open()) {
-				int count, buffer;
+				int count;
 				fin >> count;
-				buffer = count;
 				while (count--) {
 					pipe newPipe;
 					newPipe.readPipeFile(fin);
-					cout << newPipe.id;
 					groupPipe.emplace(newPipe.id, newPipe);
 				}
 				int max;
 				fin >> max;
-				pipe::maxId = max++;
-			}
-			if (fin.is_open()) {
-				int count, buffer;
+				pipe::maxId = max;
+
 				fin >> count;
-				buffer = count;
 				while (count--) {
 					KC newKC;
 					newKC.readKCFile(fin);
-					cout << newKC.id;
 					groupKC.emplace(newKC.id, newKC);
 				}
-				int max;
 				fin >> max;
-				KC::maxId = max++;
+				KC::maxId = max;
+			}
+			else {
+				cout << "Такого файла нет! \n";
 			}
 			fin.close();
 			break;
 		}
 		case 4: {
 			ofstream fout;
-			fout.open("data.txt", ios::out);
+			fout.open(getName(), ios::out);
 			if (fout.is_open()) {
-				if (groupPipe.size() != 0) {
-					fout << groupPipe.size() << endl;
-					for (auto p : groupPipe) {
-						p.second.printPipeFile(fout);
-					}
-					groupPipe[groupPipe.size() - 1].printMaxId(fout);
+				fout << groupPipe.size() << endl;
+				for (auto p : groupPipe) {
+					p.second.printPipeFile(fout);
 				}
-				else {
-					cout << "Труба не существует\n";
+				fout << pipe::maxId;
+
+				fout << groupKC.size() << endl;
+				for (auto kc : groupKC) {
+					kc.second.printKCFile(fout);
 				}
-				if (groupKC.size() != 0) {
-					fout << groupKC.size() << endl;
-					for (auto kc : groupKC) {
-						kc.second.printKCFile(fout);
-					}
-					groupKC[groupKC.size() - 1].printMaxId(fout);
-				}
-				else {
-					cout << "КС не существует\n";
-				}
+				fout << KC::maxId;
 			}
 			fout.close();
 			break;
@@ -176,9 +174,9 @@ int main() {
 			
 			bool status = getIntValue("Введите статус ремонта для поиска: ", 0, 1);
 			vector <int> result;
+			result = findObjectByFilter(groupPipe, checkByStatus, status);
 			cout << "Были найдены трубы с id:" << endl;
-			for (int i : findObjectByFilter(groupPipe, checkByStatus, status)) {
-				result.push_back(i);
+			for (int i : result) {
 				cout << i << endl;
 			}
 			if (result.size() != 0) {
@@ -186,15 +184,16 @@ int main() {
 				switch (j) {
 				case 1: {
 					for (auto& i : result) {
-						groupPipe[result[i]].changePipeRepairStatus();
+						groupPipe[i].changePipeRepairStatus();
 					}
 					break;
 				}
 				case 2: {
-					int border = getIntValue("Введите количество объектов редактирования", 1u, result.size());
-					for (int i = 1; i <= border; i++ ) {
-						int id = getIntValue("Введите ID: ", result[0], result[result.size()-1]);
+					bool flag = true;
+					while (flag) {
+						int id = getIntValue("Введите ID: ", result[0], result[result.size() - 1]);
 						groupPipe[id].changePipeRepairStatus();
+						check(flag);
 					}
 					break;
 				}
@@ -207,7 +206,11 @@ int main() {
 		}
 		case 8: {
 			if (groupKC.size() != 0) {
-				select(groupKC).changeKCWorkingWorkshopCount();
+				bool flag = true;
+				while (flag) {
+					select(groupKC).changeKCWorkingWorkshopCount();
+					check(flag);
+				}
 			}
 			else {
 				cout << "КС не существует\n";
@@ -218,8 +221,11 @@ int main() {
 		case 9: {
 			if (getIntValue("Удалить трубу - 1, удалить КС - 2", 1, 2) == 1) {
 				if (groupPipe.size() != 0) {
-
-					deleteObj(groupPipe);
+					bool flag = true;
+					while (flag) {
+						deleteObj(groupPipe);
+						check(flag);
+					}
 				}
 				else {
 					cout << "Труб не существует" << endl;
@@ -227,7 +233,11 @@ int main() {
 			}
 			else {
 				if (groupKC.size() != 0) {
-					deleteObj(groupKC);
+					bool flag = true;
+					while (flag) {
+						deleteObj(groupKC);
+						check(flag);
+					}
 				}
 				else {
 					cout << "KC не существует" << endl;
@@ -239,15 +249,11 @@ int main() {
 			int j = getIntValue("Введите фильтр поиска: \n 1. ID трубы \n 2. Имя КС \n 3. Процент работающих станций \n 4. Статус ремонта трубы", 1, 4);
 				switch (j) {
 				case 1: {
-					int count = -1;
+					bool found = false;
 					int id = getIntValue("Введите id объекта", 0u, 10000u);
-					for (int i : findObjectByFilter(groupPipe, checkByID, id)) {
-						if (groupPipe.find(i) != groupPipe.end()) {
-							cout << groupPipe[i];
-							count = i;
-						}
-					}
-					statusFilter(count);
+					vector <int> result;
+					result = findObjectByFilter(groupPipe, checkByID, id);
+					searchCout(groupPipe, result);
 					break;
 				}
 				case 2: {
@@ -256,37 +262,25 @@ int main() {
 					string name;
 					cin.get();
 					getline(cin, name);
-					for (int i : findObjectByFilter < KC ,string>(groupKC, checkByName, name)) {
-						if (groupKC.find(i) != groupKC.end()) {
-							cout << groupKC[i];
-							count = i;
-						}
-					}
-					statusFilter(count);
+					vector <int> result;
+					result = findObjectByFilter < KC, string>(groupKC, checkByName, name);
+					searchCout(groupKC, result);
 					break;
 				}
 				case 3: {
 					int count = -1;
 					double perc = getDoubleValue("Введите процент действующих цехов КС для поиска (более, чем): ", 0, 100);
-					for (int i : findObjectByFilter (groupKC, checkByWorkingPercent, perc )) {
-						if (groupKC.find(i) != groupKC.end()) {
-							cout << groupKC[i];
-							count = i;
-						}
-					}
-					statusFilter(count);
+					vector <int> result;
+					result = findObjectByFilter(groupKC, checkByWorkingPercent, perc);
+					searchCout(groupKC, result);
 					break;
 				}
 				case 4: {
 					int count = -1;
 					bool status = getIntValue("Введите статус ремонта для поиска: ", 0, 1);
-					for (int i : findObjectByFilter(groupPipe, checkByStatus, status)) {
-						if (groupPipe.find(i) != groupPipe.end()) {
-							cout << groupPipe[i];
-							count = i;
-						}
-					}
-					statusFilter(count);
+					vector <int> result;
+					result = findObjectByFilter(groupPipe, checkByStatus, status);
+					searchCout(groupPipe, result);
 					break;
 				}
 			}

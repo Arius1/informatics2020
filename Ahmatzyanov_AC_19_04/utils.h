@@ -34,12 +34,10 @@ double getDoubleValue(std::string text, T border1, T border2) {
 
 template <class className>
 className& select(std::unordered_map <int ,className>& group) {
-	bool check = false;
-	while (!check) {
+	while (1) {
 		unsigned int index = getIntValue("Введите id объекта: ", 0u, 10000u);
 		if (group.find(index) != group.end()) {
 			return group[index];
-			check = true;
 		}
 		else {
 			std::cout << "Ошибка! Такого объекта нет! \n";
@@ -58,3 +56,6 @@ void deleteObj(std::unordered_map <int, className>& group) {
 		std::cout << "Такого объекта нет!" << std::endl;
 	}
 }
+
+void check(bool& flag);
+std::string getName();
