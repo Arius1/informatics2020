@@ -6,6 +6,7 @@
 #include "pipe.h"
 #include "utils.h"
 #include <unordered_map>
+#include <list>
 
 using namespace std;
 //добавить задание имени файла
@@ -51,7 +52,6 @@ void searchCout(unordered_map <int, className> group, const vector <int>& result
 	}
 }
 
-
 void Menu() {
 	cout << "\n1. Создать новую трубу\n"
 		<< "2. Создать новую КС\n"
@@ -80,22 +80,22 @@ int main() {
 		int i = getIntValue(text, 0, 10);
 		switch (i) {
 		case 1: {
-			bool flag = true;
-			while (flag) {
+			bool act = true;
+			while (act) {
 				pipe newPipe;
 				cin >> newPipe;
 				groupPipe.emplace(newPipe.id, newPipe);
-				check(flag);
+				check(act);
 			}
 			break;
 		}
 		case 2: {
-			bool flag = true;
-			while (flag) {
+			bool act = true;
+			while (act) {
 				KC newKC;
 				cin >> newKC;
 				groupKC.emplace(newKC.id, newKC);
-				check(flag);
+				check(act);
 			}
 			break;
 		}
@@ -189,11 +189,11 @@ int main() {
 					break;
 				}
 				case 2: {
-					bool flag = true;
-					while (flag) {
+					bool act = true;
+					while (act) {
 						int id = getIntValue("Введите ID: ", result[0], result[result.size() - 1]);
 						groupPipe[id].changePipeRepairStatus();
-						check(flag);
+						check(act);
 					}
 					break;
 				}
@@ -206,10 +206,10 @@ int main() {
 		}
 		case 8: {
 			if (groupKC.size() != 0) {
-				bool flag = true;
-				while (flag) {
+				bool act = true;
+				while (act) {
 					select(groupKC).changeKCWorkingWorkshopCount();
-					check(flag);
+					check(act);
 				}
 			}
 			else {
@@ -221,10 +221,10 @@ int main() {
 		case 9: {
 			if (getIntValue("Удалить трубу - 1, удалить КС - 2", 1, 2) == 1) {
 				if (groupPipe.size() != 0) {
-					bool flag = true;
-					while (flag) {
+					bool act = true;
+					while (act) {
 						deleteObj(groupPipe);
-						check(flag);
+						check(act);
 					}
 				}
 				else {
@@ -233,10 +233,10 @@ int main() {
 			}
 			else {
 				if (groupKC.size() != 0) {
-					bool flag = true;
-					while (flag) {
+					bool act = true;
+					while (act) {
 						deleteObj(groupKC);
-						check(flag);
+						check(act);
 					}
 				}
 				else {

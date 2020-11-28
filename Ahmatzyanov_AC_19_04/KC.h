@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include <list>
 class KC
 {
 public:
@@ -9,6 +10,8 @@ public:
 	int workshopCount = 0;
 	int workingWorkshopCount = 0;
 	double efficiency = 0;
+	std::list <int> input;
+	std::list <int> output;
 
 	KC();
 	void readKCFile(std::ifstream& fin);

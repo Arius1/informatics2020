@@ -1,9 +1,11 @@
 #include "utils.h"
 
-void check(bool& flag) {
+using namespace std;
+
+void check(bool& act) {
 	int check = getIntValue("Повторить действие? 0 - нет/ 1 - да: ", 0, 1);
 	if (check == 0) {
-		flag = !flag;
+		act = !act;
 	}
 }
 
@@ -16,3 +18,7 @@ std::string getName()
 	return name;
 }
 
+void step(std::list<KC>& listKC, const std::unordered_map<int, KC>& group)
+{
+
+}

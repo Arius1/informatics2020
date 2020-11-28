@@ -6,6 +6,7 @@
 #include "KC.h"
 #include "pipe.h"
 #include <unordered_map>
+#include <list>
 
 template <typename T>
 int getIntValue(std::string text, T border1, T border2) {
@@ -59,3 +60,4 @@ void deleteObj(std::unordered_map <int, className>& group) {
 
 void check(bool& flag);
 std::string getName();
+void step(std::list <KC>& listKC, const std::unordered_map <int, KC>& group);
