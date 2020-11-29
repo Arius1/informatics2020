@@ -60,4 +60,3 @@ void deleteObj(std::unordered_map <int, className>& group) {
 
 void check(bool& flag);
 std::string getName();
-void step(std::list <KC>& listKC, const std::unordered_map <int, KC>& group);

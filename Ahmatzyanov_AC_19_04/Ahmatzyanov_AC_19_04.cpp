@@ -63,10 +63,58 @@ void Menu() {
 		<< "8. Редактировать количество работающих станций КС \n"
 		<< "9. Удалить объект\n"
 		<< "10. Найти объект\n"
+		<< "11. Топологическая сортировка\n"
 		<< "\n"
 		<< "0. Выход\n";
 }
 
+void stepDown(list <int>& answer, const unordered_map <int, KC>& group, unordered_map <int, bool>& visited, int id, bool& cycle) {
+	if (visited.find(id)->second == false) {
+		list <int> linkedKCs;
+		visited[id] = true;
+		for (auto i : group.find(id)->second.output) { //поиск смежных КС
+			for (auto j : group) {
+				for (auto k : j.second.input) { //3 фора, так как в листе нет find
+					if (k == i) {
+						linkedKCs.push_front(j.first);
+					}
+				}
+			}
+		}
+		for (auto i : linkedKCs) { //для всех найденных КС делаем проход
+			stepDown(answer, group, visited, i, cycle);
+		}
+		answer.push_front(id);
+	}
+	else {
+		cycle = true;
+	}
+}
+
+void topologicSort(const unordered_map <int, KC>& group, list <int>& answer) {
+	unordered_map <int, bool> visited;
+	bool cycle = false;
+	cout << "Проверка на цикличность:";
+	for (auto i : group) { //метки посещения на false
+		for (auto j : group)
+			visited[j.first] = false;
+		stepDown(answer, group, visited, i.first, cycle);
+		if (cycle == true) {
+			cout << "граф цикличен!";
+		}
+	}
+	if (cycle == false) {
+		cout << "Граф ацикличен. Включение сортировки... \n";
+		for (auto i : group) { //метки посещения на false
+			visited[i.first] = false;
+		}
+		for (auto i : group) { //первый шаг для любой вершины
+			if (visited.find(i.first)->second == false) {
+				stepDown(answer, group, visited, i.first, cycle);
+			}
+		}
+	}
+}
 int main() {
 
 	setlocale(LC_ALL, "Russian");
@@ -77,7 +125,7 @@ int main() {
 	while (1) {
 		Menu();
 		string text = "Введите команду: ";
-		int i = getIntValue(text, 0, 10);
+		int i = getIntValue(text, 0, 11);
 		switch (i) {
 		case 1: {
 			bool act = true;
@@ -285,6 +333,16 @@ int main() {
 				}
 			}
 
+			break;
+		}
+		case 11: {
+			list <int> answer;
+			topologicSort(groupKC, answer);
+			cout << "Результат топологической сортировки: \n";
+			for (int i = 1; i <=  groupKC.size(); i++) {
+				cout << "Вершина "<< i << " : KC id " << answer.front() << endl;
+				answer.pop_front();
+			}
 			break;
 		}
 		case 0: {

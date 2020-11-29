@@ -18,7 +18,3 @@ std::string getName()
 	return name;
 }
 
-void step(std::list<KC>& listKC, const std::unordered_map<int, KC>& group)
-{
-
-}
