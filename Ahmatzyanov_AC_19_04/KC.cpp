@@ -80,6 +80,7 @@ void KC::printKCFile(std::ofstream& fout)
 		for (auto& p : output) {
 			fout << p << '\t';
 		}
+		fout << "0\n";
 }
 
 

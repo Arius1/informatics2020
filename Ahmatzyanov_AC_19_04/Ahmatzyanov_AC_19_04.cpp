@@ -91,17 +91,13 @@ void stepDown(list <int>& answer, const unordered_map <int, KC>& group, unordere
 	}
 }
 
-void topologicSort(const unordered_map <int, KC>& group, list <int>& answer) {
+void topologicSort(const unordered_map <int, KC>& group, list <int>& answer, bool& cycle) {
 	unordered_map <int, bool> visited;
-	bool cycle = false;
 	cout << "Проверка на цикличность:";
 	for (auto i : group) { //метки посещения на false
 		for (auto j : group)
 			visited[j.first] = false;
 		stepDown(answer, group, visited, i.first, cycle);
-		if (cycle == true) {
-			cout << "граф цикличен!";
-		}
 	}
 	if (cycle == false) {
 		cout << "Граф ацикличен. Включение сортировки... \n";
@@ -337,11 +333,17 @@ int main() {
 		}
 		case 11: {
 			list <int> answer;
-			topologicSort(groupKC, answer);
-			cout << "Результат топологической сортировки: \n";
-			for (int i = 1; i <=  groupKC.size(); i++) {
-				cout << "Вершина "<< i << " : KC id " << answer.front() << endl;
-				answer.pop_front();
+			bool cycle = false;
+			topologicSort(groupKC, answer, cycle);
+			if (cycle == false){
+				cout << "Результат топологической сортировки: \n";
+				for (int i = 1; i <= groupKC.size(); i++) {
+					cout << "Вершина " << i << " : KC id " << answer.front() << endl;
+					answer.pop_front();
+				}
+			}
+			else {
+				cout << "граф цикличен!";
 			}
 			break;
 		}
