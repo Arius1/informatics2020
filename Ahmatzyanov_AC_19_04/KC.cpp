@@ -19,12 +19,12 @@ istream& operator >> (istream& in, KC& newKC) {
 	newKC.efficiency = getDoubleValue("\nВведите эффективность станции: ", 0, 100);
 	bool act = true;
 	while (act) {
-		newKC.input.push_back(getIntValue("\nВведите входной маркер: ", 1, 1000000));
+		newKC.input.push_back(getIntValue("\nВведите входной маркер: ", 0, 1000000));
 		check(act);
 	}
 	act = true;
 	while (act) {
-		newKC.output.push_back(getIntValue("\nВведите выходной маркер: ", 1, 1000000));
+		newKC.output.push_back(getIntValue("\nВведите выходной маркер: ", 0, 1000000));
 		check(act);
 	}
 	return in;
@@ -36,11 +36,11 @@ ostream& operator<<(ostream& out, const KC& kc)
 		<< "Название КС: " << kc.Name << endl
 		<< "Кол-во цехов: " << kc.workingWorkshopCount << " / " << kc.workshopCount << endl
 		<< "Эффективность КС: " << kc.efficiency << endl
-		<< "Входные маркеры: ";
+		<< "Входные трубы: ";
 	for (auto& p : kc.input) {
 		cout << p << '\t';
 	}
-	cout << "\nВыходные маркеры: ";
+	cout << "\nВыходные трубы: ";
 	for (auto& p : kc.output) {
 		cout << p << '\t';
 	}
@@ -59,12 +59,12 @@ void KC::readKCFile(std::ifstream& fin)
 	fin >> id >> Name >> workshopCount >> workingWorkshopCount >> efficiency;
 	int checkMark;
 	fin >> checkMark;
-	while (checkMark != 0) {
+	while (checkMark != -1) {
 		input.push_back(checkMark);
 		fin >> checkMark;
 	}
 	fin >> checkMark;
-	while (checkMark != 0) {
+	while (checkMark != -1) {
 		output.push_back(checkMark);
 		fin >> checkMark;
 	}
@@ -76,11 +76,11 @@ void KC::printKCFile(std::ofstream& fout)
 		for (auto& p : input) {
 			fout << p << '\t';
 		}
-		fout << "0\t";
+		fout << "-1\t";
 		for (auto& p : output) {
 			fout << p << '\t';
 		}
-		fout << "0\n";
+		fout << "-1\n";
 }
 
 

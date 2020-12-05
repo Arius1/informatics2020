@@ -10,7 +10,6 @@ public:
 	double length = 0;
 	int diameter = 0;
 	bool repairStatus = false;
-	int mark = -1;
 
 	pipe();
 	
