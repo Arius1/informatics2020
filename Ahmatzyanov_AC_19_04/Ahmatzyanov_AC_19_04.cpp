@@ -73,7 +73,7 @@ void stepDown(list <int>& answer, const unordered_map <int, pipe>& groupPipe, co
 		list <int> linkedKCs;
 		visited[id] = true;
 		for (auto i : groupKC.find(id)->second.output) { //поиск смежных КС
-			if (groupPipe.find(i)->second.repairStatus == 0) {
+			if (groupPipe.find(i) != groupPipe.end() and groupPipe.find(i)->second.repairStatus == 0) {
 				for (auto j : groupKC) {
 					for (auto k : j.second.input) { //3 фора, так как в листе нет find
 						if (k == i) {
