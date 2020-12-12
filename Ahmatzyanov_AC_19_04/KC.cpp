@@ -54,6 +54,11 @@ KC::KC()
 	id = ++maxId;
 }
 
+int KC::getId()
+{
+	return id;
+}
+
 void KC::readKCFile(std::ifstream& fin)
 {
 	fin >> id >> Name >> workshopCount >> workingWorkshopCount >> efficiency;

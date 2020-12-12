@@ -3,8 +3,9 @@
 #include <list>
 class KC
 {
-public:
 	int id;
+
+public:
 	static int maxId;
 	std::string Name = " ";
 	int workshopCount = 0;
@@ -14,6 +15,9 @@ public:
 	std::list <int> output;
 
 	KC();
+
+	int getId();
+
 	void readKCFile(std::ifstream& fin);
 	void printKCFile(std::ofstream& fout);
 	void changeKCWorkingWorkshopCount();

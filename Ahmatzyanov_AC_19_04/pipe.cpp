@@ -28,6 +28,11 @@ pipe::pipe()
 	id = ++maxId;
 }
 
+int pipe::getId()
+{
+	return id;
+}
+
 void pipe::changePipeRepairStatus()
 {
 	repairStatus = !repairStatus;

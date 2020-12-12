@@ -4,15 +4,21 @@
 
 class pipe
 {
-public:
 	int id;
+	
+public:
+
 	static int maxId;
 	double length = 0;
 	int diameter = 0;
 	bool repairStatus = false;
+	int input = -1;
+	int output = -1;
 
 	pipe();
 	
+	int getId();
+
 	void changePipeRepairStatus();
 
 	void readPipeFile(std::ifstream& fin);

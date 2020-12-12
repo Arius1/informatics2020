@@ -9,28 +9,29 @@
 #include <list>
 
 using namespace std;
-//добавить задание имени файла
-//основа теории по unorderedmap: https://www.cplusplus.com/reference/unordered_map/unordered_map/
+//отдельный класс для topo?
+//редактирование КС по связям 
+//list связей на set?
+
 
 template <class className, typename par>
-using Filter = bool(*)(const className& object, par parameter);
+using Filter = bool(*)(className& object, par parameter);
 
-bool checkByName(const KC& kc, string parameter) {
+bool checkByName(KC& kc, string parameter) {
 	return kc.Name == parameter;
 }
-bool checkByStatus(const pipe& p, bool parameter) {
+bool checkByStatus(pipe& p, bool parameter) {
 	return p.repairStatus == parameter;
 }
-bool checkByWorkingPercent(const KC& kc, double parameter) {
+bool checkByWorkingPercent(KC& kc, double parameter) {
 	return (((double)kc.workingWorkshopCount / (double)kc.workshopCount) * 100) >= parameter;
 }
-template <class className>
-bool checkByID(const className& obj, int parameter) {
-	return obj.id == parameter;
+bool checkPipeByID(pipe& obj, int parameter) {
+	return obj.getId() == parameter;
 }
 
 template <class className, typename T>
-vector <int> findObjectByFilter(const unordered_map<int, className>& group, Filter <className, T> f, T parameter) {
+vector <int> findObjectByFilter(unordered_map<int, className>& group, Filter <className, T> f, T parameter) {
 	vector <int> result;
 	for (auto& p : group) {
 		if (f(p.second, parameter)) {
@@ -131,7 +132,7 @@ int main() {
 			while (act) {
 				pipe newPipe;
 				cin >> newPipe;
-				groupPipe.emplace(newPipe.id, newPipe);
+				groupPipe.emplace(newPipe.getId(), newPipe);
 				check(act);
 			}
 			break;
@@ -141,7 +142,7 @@ int main() {
 			while (act) {
 				KC newKC;
 				cin >> newKC;
-				groupKC.emplace(newKC.id, newKC);
+				groupKC.emplace(newKC.getId(), newKC);
 				check(act);
 			}
 			break;
@@ -157,7 +158,7 @@ int main() {
 				while (count--) {
 					pipe newPipe;
 					newPipe.readPipeFile(fin);
-					groupPipe.emplace(newPipe.id, newPipe);
+					groupPipe.emplace(newPipe.getId(), newPipe);
 				}
 				int max;
 				fin >> max;
@@ -167,7 +168,7 @@ int main() {
 				while (count--) {
 					KC newKC;
 					newKC.readKCFile(fin);
-					groupKC.emplace(newKC.id, newKC);
+					groupKC.emplace(newKC.getId(), newKC);
 				}
 				fin >> max;
 				KC::maxId = max;
@@ -299,7 +300,7 @@ int main() {
 					bool found = false;
 					int id = getIntValue("Введите id объекта", 0u, 10000u);
 					vector <int> result;
-					result = findObjectByFilter(groupPipe, checkByID, id);
+					result = findObjectByFilter(groupPipe, checkPipeByID, id);
 					searchCout(groupPipe, result);
 					break;
 				}
