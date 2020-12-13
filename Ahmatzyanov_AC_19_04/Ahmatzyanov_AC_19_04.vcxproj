@@ -140,11 +140,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Ahmatzyanov_AC_19_04.cpp" />
+    <ClCompile Include="gts.cpp" />
     <ClCompile Include="KC.cpp" />
     <ClCompile Include="pipe.cpp" />
     <ClCompile Include="utils.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="gts.h" />
     <ClInclude Include="KC.h" />
     <ClInclude Include="pipe.h" />
     <ClInclude Include="utils.h" />

@@ -12,8 +12,6 @@ public:
 	double length = 0;
 	int diameter = 0;
 	bool repairStatus = false;
-	int input = -1;
-	int output = -1;
 
 	pipe();
 	
@@ -26,5 +24,6 @@ public:
 
 	friend std::ostream& operator << (std::ostream& out, const pipe& p);
 	friend std::istream& operator >> (std::istream& in, pipe& p);
+
 };
 

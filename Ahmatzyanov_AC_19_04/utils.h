@@ -5,8 +5,9 @@
 #include <vector>
 #include "KC.h"
 #include "pipe.h"
+#include "gts.h"
 #include <unordered_map>
-#include <list>
+#include <unordered_set>
 
 template <typename T>
 int getIntValue(std::string text, T border1, T border2) {
@@ -58,5 +59,39 @@ void deleteObj(std::unordered_map <int, className>& group) {
 	}
 }
 
+void link(const std::unordered_map <int, KC>& groupKC, const std::unordered_map <int, pipe>& groupPipe, std::unordered_map <int, gts>& linkedKCs, std::unordered_set <int>& linkedPipes);
+void unlink(std::unordered_map <int, gts>& linkedKCs, std::unordered_set <int>& linkedPipes);
 void check(bool& flag);
 std::string getName();
+void Menu();
+
+template <class className, typename par>
+using Filter = bool(*)(className& object, par parameter);
+
+bool checkByName(KC& kc, std::string parameter);
+bool checkByStatus(pipe& p, bool parameter);
+bool checkByWorkingPercent(KC& kc, double parameter);
+bool checkPipeByID(pipe& obj, int parameter);
+
+template <class className, typename T>
+std::vector <int> findObjectByFilter(std::unordered_map<int, className>& group, Filter <className, T> f, T parameter) {
+	std::vector <int> result;
+	for (auto& p : group) {
+		if (f(p.second, parameter)) {
+			result.push_back(p.first);
+		}
+	}
+	return result;
+}
+
+template <class className>
+void searchCout(std::unordered_map <int, className> group, const std::vector <int>& result) {
+	if (result.size() > 0) {
+		for (auto i : result) {
+			std::cout << group[i];
+		}
+	}
+	else {
+		std::cout << "Таких объектов нет! \n";
+	}
+}

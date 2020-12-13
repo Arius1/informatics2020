@@ -4,78 +4,24 @@
 #include <vector>
 #include "KC.h"
 #include "pipe.h"
+#include "gts.h"
 #include "utils.h"
 #include <unordered_map>
 #include <list>
+#include <unordered_set>
 
 using namespace std;
 //отдельный класс для topo?
 //редактирование КС по связям 
 //list связей на set?
 
-
-template <class className, typename par>
-using Filter = bool(*)(className& object, par parameter);
-
-bool checkByName(KC& kc, string parameter) {
-	return kc.Name == parameter;
-}
-bool checkByStatus(pipe& p, bool parameter) {
-	return p.repairStatus == parameter;
-}
-bool checkByWorkingPercent(KC& kc, double parameter) {
-	return (((double)kc.workingWorkshopCount / (double)kc.workshopCount) * 100) >= parameter;
-}
-bool checkPipeByID(pipe& obj, int parameter) {
-	return obj.getId() == parameter;
-}
-
-template <class className, typename T>
-vector <int> findObjectByFilter(unordered_map<int, className>& group, Filter <className, T> f, T parameter) {
-	vector <int> result;
-	for (auto& p : group) {
-		if (f(p.second, parameter)) {
-			result.push_back(p.first);
-		}
-	}
-	return result;
-}
-
-template <class className>
-void searchCout(unordered_map <int, className> group, const vector <int>& result) {
-	if (result.size() > 0) {
-		for (auto i : result) {
-			cout << group[i];
-		}
-	}
-	else {
-		cout << "Таких объектов нет! \n";
-	}
-}
-
-void Menu() {
-	cout << "\n1. Создать новую трубу\n"
-		<< "2. Создать новую КС\n"
-		<< "3. Считать трубу и КС из файла\n"
-		<< "4. Вывод трубы и КС в файл \n"
-		<< "5. Вывести трубу\n"
-		<< "6. Вывести КС\n"
-		<< "7. Редактировать статус труб\n"
-		<< "8. Редактировать количество работающих станций КС \n"
-		<< "9. Удалить объект\n"
-		<< "10. Найти объект\n"
-		<< "11. Топологическая сортировка\n"
-		<< "\n"
-		<< "0. Выход\n";
-}
-
-void stepDown(list <int>& answer, const unordered_map <int, pipe>& groupPipe, const unordered_map <int, KC>& groupKC, unordered_map <int, bool>& visited, int id, bool& cycle) {
+void stepDown(list <int>& answer, const unordered_map <int, pipe>& groupPipe, const unordered_map <int, gts>& KCs, unordered_map <int, bool>& visited, int id, bool& cycle) {
 	if (visited.find(id)->second == false) {
 		list <int> linkedKCs;
 		visited[id] = true;
-		for (auto i : groupKC.find(id)->second.output) { //поиск смежных КС
+		for (auto i : KCs.find(id)->second.output) { //поиск смежных КС
 			if (groupPipe.find(i) != groupPipe.end() and groupPipe.find(i)->second.repairStatus == 0) {
-				for (auto j : groupKC) {
+				for (auto j : KCs) {
 					for (auto k : j.second.input) { //3 фора, так как в листе нет find
 						if (k == i) {
 							linkedKCs.push_front(j.first);
@@ -85,7 +31,7 @@ void stepDown(list <int>& answer, const unordered_map <int, pipe>& groupPipe, co
 			}
 		}
 		for (auto i : linkedKCs) { //для всех найденных КС делаем проход
-			stepDown(answer, groupPipe, groupKC, visited, i, cycle);
+			stepDown(answer, groupPipe, KCs, visited, i, cycle);
 		}
 		answer.push_front(id);
 	}
@@ -94,22 +40,22 @@ void stepDown(list <int>& answer, const unordered_map <int, pipe>& groupPipe, co
 	}
 }
 
-void topologicSort(const unordered_map <int, pipe>& groupPipe, const unordered_map <int, KC>& groupКС, list <int>& answer, bool& cycle) {
+void topologicSort(const unordered_map <int, pipe>& groupPipe, const unordered_map <int, gts>& KCs, list <int>& answer, bool& cycle) {
 	unordered_map <int, bool> visited;
 	cout << "Проверка на цикличность:";
-	for (auto i : groupКС) { //метки посещения на false
-		for (auto j : groupКС)
+	for (auto i : KCs) { 
+		for (auto j : KCs) //метки посещения на false
 			visited[j.first] = false;
-		stepDown(answer, groupPipe, groupКС, visited, i.first, cycle);
+		stepDown(answer, groupPipe, KCs, visited, i.first, cycle);
 	}
 	if (cycle == false) {
 		cout << "Граф ацикличен. Включение сортировки... \n";
-		for (auto i : groupКС) { //метки посещения на false
+		for (auto i : KCs) { //метки посещения на false
 			visited[i.first] = false;
 		}
-		for (auto i : groupКС) { //первый шаг для любой вершины
+		for (auto i : KCs) { //первый шаг для любой вершины
 			if (visited.find(i.first)->second == false) {
-				stepDown(answer, groupPipe, groupКС, visited, i.first, cycle);
+				stepDown(answer, groupPipe, KCs, visited, i.first, cycle);
 			}
 		}
 		cycle = false; // в ходе работы найдет посещенную вершину
@@ -121,6 +67,8 @@ int main() {
 
 	unordered_map <int, pipe> groupPipe;
 	unordered_map <int, KC>groupKC;
+	unordered_map <int, gts> linkedKCs;
+	unordered_set <int> linkedPipes;
 
 	while (1) {
 		Menu();
@@ -295,7 +243,7 @@ int main() {
 		}
 		case 10: {
 			int j = getIntValue("Введите фильтр поиска: \n 1. ID трубы \n 2. Имя КС \n 3. Процент работающих станций \n 4. Статус ремонта трубы", 1, 4);
-				switch (j) {
+			switch (j) {
 				case 1: {
 					bool found = false;
 					int id = getIntValue("Введите id объекта", 0u, 10000u);
@@ -336,18 +284,109 @@ int main() {
 			break;
 		}
 		case 11: {
-			list <int> answer;
-			bool cycle = false;
-			topologicSort(groupPipe, groupKC, answer, cycle);
-			if (cycle == false){
-				cout << "Результат топологической сортировки: \n";
-				for (int i = 1; i <= groupKC.size(); i++) {
-					cout << "Вершина " << i << " : KC id " << answer.front() << endl;
-					answer.pop_front();
+			int j = getIntValue("Введите действие: \n 1. Создать гтс без связей. \n 2. Считать гтс из файла. \n 3. Установить связь. \n 4. Удалить связь \n 5. Топологическая сортировка \n 6. Показать связи \n 7.Вывод в файл", 1, 7);
+			switch (j) {
+				case 1: {
+					for (const auto& obj : groupKC) {
+						gts newKC;
+						linkedKCs.emplace(obj.first, newKC);
+					}
+					break;
 				}
-			}
-			else {
-				cout << "граф цикличен!";
+				case 2: {
+					linkedKCs.clear();
+					ifstream fin;
+					fin.open(getName(), ios::in);
+					if (fin.is_open()) {
+						int count, id, link;
+						fin >> count;
+						while (count--) {
+							gts newKC;
+							fin >> id;
+							linkedKCs.emplace(id, newKC);
+							fin >> link;
+							while (link != -1) {
+								linkedKCs.find(id)->second.input.insert(link);
+								fin >> link;
+							}
+							fin >> link;
+							while (link != -1) {
+								linkedKCs.find(id)->second.output.insert(link);
+								fin >> link;
+							}
+						}
+					}
+					fin.close();
+					linkedPipes.clear();
+					if (linkedKCs.size() > 0) {
+						for (const auto& obj : linkedKCs) {
+							for (const auto& k : obj.second.input) {
+								linkedPipes.insert(k);
+							}
+							for (const auto& k : obj.second.output) {
+								linkedPipes.insert(k);
+							}
+						}
+					}
+					break;
+				}
+				case 3: {
+					link(groupKC, groupPipe, linkedKCs, linkedPipes);
+					break;
+				}
+				case 4: {
+					unlink(linkedKCs, linkedPipes);
+					break;
+				}
+				case 5: {
+					list <int> answer;
+					bool cycle = false;
+					topologicSort(groupPipe, linkedKCs, answer, cycle);
+					if (cycle == false) {
+						cout << "Результат топологической сортировки: \n";
+						for (int i = 1; i <= linkedKCs.size(); i++) {
+							cout << "Вершина " << i << " : KC id " << answer.front() << endl;
+							answer.pop_front();
+						}
+					}
+					else {
+						cout << "граф цикличен!";
+					}
+					break;
+				}
+				case 6: {
+					for (const auto& obj : linkedKCs) {
+						cout << "\n КС id "<<obj.first << "\t input: ";
+						for (const auto& links : obj.second.input) {
+							cout << links << " ";
+						}
+						cout << "\t output: ";
+						for (const auto& links : obj.second.output) {
+							cout << links << " ";
+						}
+					}
+					break;
+				}
+				case 7: {
+					ofstream fout;
+					fout.open(getName(), ios::out);
+					if (fout.is_open()) {
+						fout << linkedKCs.size();
+						for (const auto& obj : linkedKCs) {
+							fout << "\n" << obj.first << "\t";
+							for (const auto& link : obj.second.input) {
+								fout << link << "\t";
+							}
+							fout << "-1 \t";
+							for (const auto& link : obj.second.output) {
+								fout << link << "\t";
+							}
+							fout << "-1 \t";
+						}
+					}
+					fout.close();
+					break;
+				}
 			}
 			break;
 		}
