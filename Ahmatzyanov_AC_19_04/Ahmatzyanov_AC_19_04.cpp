@@ -11,56 +11,7 @@
 #include <unordered_set>
 
 using namespace std;
-//отдельный класс для topo?
-//редактирование КС по связям 
-//list связей на set?
 
-void stepDown(list <int>& answer, const unordered_map <int, pipe>& groupPipe, const unordered_map <int, gts>& KCs, unordered_map <int, bool>& visited, int id, bool& cycle) {
-	if (visited.find(id)->second == false) {
-		list <int> linkedKCs;
-		visited[id] = true;
-		for (auto i : KCs.find(id)->second.output) { //поиск смежных КС
-			if (groupPipe.find(i) != groupPipe.end() and groupPipe.find(i)->second.repairStatus == 0) {
-				for (auto j : KCs) {
-					for (auto k : j.second.input) { //3 фора, так как в листе нет find
-						if (k == i) {
-							linkedKCs.push_front(j.first);
-						}
-					}
-				}
-			}
-		}
-		for (auto i : linkedKCs) { //для всех найденных КС делаем проход
-			stepDown(answer, groupPipe, KCs, visited, i, cycle);
-		}
-		answer.push_front(id);
-	}
-	else {
-		cycle = true;
-	}
-}
-
-void topologicSort(const unordered_map <int, pipe>& groupPipe, const unordered_map <int, gts>& KCs, list <int>& answer, bool& cycle) {
-	unordered_map <int, bool> visited;
-	cout << "Проверка на цикличность:";
-	for (auto i : KCs) { 
-		for (auto j : KCs) //метки посещения на false
-			visited[j.first] = false;
-		stepDown(answer, groupPipe, KCs, visited, i.first, cycle);
-	}
-	if (cycle == false) {
-		cout << "Граф ацикличен. Включение сортировки... \n";
-		for (auto i : KCs) { //метки посещения на false
-			visited[i.first] = false;
-		}
-		for (auto i : KCs) { //первый шаг для любой вершины
-			if (visited.find(i.first)->second == false) {
-				stepDown(answer, groupPipe, KCs, visited, i.first, cycle);
-			}
-		}
-		cycle = false; // в ходе работы найдет посещенную вершину
-	}
-}
 int main() {
 
 	setlocale(LC_ALL, "Russian");

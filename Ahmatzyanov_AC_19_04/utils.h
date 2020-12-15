@@ -65,6 +65,9 @@ void check(bool& flag);
 std::string getName();
 void Menu();
 
+void stepDown(std::list <int>& answer, const std::unordered_map <int, pipe>& groupPipe, const std::unordered_map <int, gts>& KCs, std::unordered_map <int, bool>& visited, int id, bool& cycle);
+void topologicSort(const std::unordered_map <int, pipe>& groupPipe, const std::unordered_map <int, gts>& KCs, std::list <int>& answer, bool& cycle);
+
 template <class className, typename par>
 using Filter = bool(*)(className& object, par parameter);
 
