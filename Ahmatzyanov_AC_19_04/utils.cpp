@@ -142,10 +142,8 @@ void stepDown(list <int>& answer, const unordered_map <int, pipe>& groupPipe, co
 		for (auto i : KCs.find(id)->second.output) { //поиск смежных КС
 			if (groupPipe.find(i) != groupPipe.end() and groupPipe.find(i)->second.repairStatus == 0) {
 				for (auto j : KCs) {
-					for (auto k : j.second.input) { //3 фора, так как в листе нет find
-						if (k == i) {
-							linkedKCs.push_front(j.first);
-						}
+					if (j.second.input.find(i) != j.second.input.end()) {
+						linkedKCs.push_front(j.first);
 					}
 				}
 			}
