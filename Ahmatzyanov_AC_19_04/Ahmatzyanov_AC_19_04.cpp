@@ -235,7 +235,7 @@ int main() {
 			break;
 		}
 		case 11: {
-			int j = getIntValue("Введите действие: \n 1. Создать гтс без связей. \n 2. Считать гтс из файла. \n 3. Установить связь. \n 4. Удалить связь \n 5. Топологическая сортировка \n 6. Показать связи \n 7.Вывод в файл", 1, 7);
+			int j = getIntValue("Введите действие: \n 1. Создать гтс без связей. \n 2. Считать гтс из файла. \n 3. Установить связь. \n 4. Удалить связь \n 5. Топологическая сортировка \n 6. Показать связи \n 7. Вывод в файл. \n 8. Кратчайший путь.", 1, 9);
 			switch (j) {
 				case 1: {
 					for (const auto& obj : groupKC) {
@@ -336,6 +336,43 @@ int main() {
 						}
 					}
 					fout.close();
+					break;
+				}
+				case 8: {
+					int first, last;
+					double distance;
+					bool correct = false;
+					list <int> answer;
+
+					first = getIntValue("Введите id начальной КС", 0, 10000);
+					if (groupKC.find(first) != groupKC.end()) {
+						correct = true;
+					}
+					else {
+						cout << "\nТакого объекта нет! Повторите попытку. ";
+					}
+					correct = false;
+					while (!correct) {
+						last = getIntValue("Введите id конечной КС", 0, 10000);
+						if (groupKC.find(last) != groupKC.end()) {
+							  correct = true;
+						}
+						else {
+							cout << "\nТакого объекта нет! Повторите попытку. ";
+						}
+					}
+					minDist(groupPipe, linkedKCs, answer, first, last, distance);
+					if (linkedKCs.size() > 0) {
+						int countKC = answer.size();
+						for (int i = 1; i <= countKC; i++) {
+							cout << "Вершина " << i << " : KC id " << answer.front() << endl;
+							answer.pop_front();
+						}
+						cout << "Минимальный путь равен: " << distance << "м. \n";
+					}
+					else {
+						cout << "Путь между станциями не найден.\n";
+					}
 					break;
 				}
 			}
