@@ -362,7 +362,7 @@ int main() {
 						}
 					}
 					minDist(groupPipe, linkedKCs, answer, first, last, distance);
-					if (linkedKCs.size() > 0) {
+					if (answer.size() > 0) {
 						int countKC = answer.size();
 						for (int i = 1; i <= countKC; i++) {
 							cout << "Вершина " << i << " : KC id " << answer.front() << endl;

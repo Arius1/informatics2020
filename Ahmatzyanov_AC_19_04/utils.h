@@ -61,7 +61,7 @@ void deleteObj(std::unordered_map <int, className>& group) {
 
 void link(const std::unordered_map <int, KC>& groupKC, const std::unordered_map <int, pipe>& groupPipe, std::unordered_map <int, gts>& linkedKCs, std::unordered_set <int>& linkedPipes);
 void unlink(std::unordered_map <int, gts>& linkedKCs, std::unordered_set <int>& linkedPipes);
-void check(bool& flag);
+void check(bool& act);
 std::string getName();
 void Menu();
 

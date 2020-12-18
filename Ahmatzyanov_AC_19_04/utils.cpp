@@ -146,7 +146,7 @@ void findLinkedKCs(unordered_map <int, int>& linkedKCs, const unordered_map <int
 		}
 	}
 }
-void reverseFindLinkedKCs(unordered_map <int, int>& linkedKCs, const unordered_map <int, pipe>& groupPipe, const unordered_map <int, gts>& KCs, const int& id) {
+void reverseFindLinkedKCs(unordered_map <int, int>& linkedKCs, const unordered_map <int, pipe>& groupPipe, const unordered_map <int, gts>& KCs, const int& id) { //обратный проход
 	for (auto i : KCs.find(id)->second.input) {
 		if (groupPipe.find(i) != groupPipe.end() and groupPipe.find(i)->second.repairStatus == 0) {
 			for (auto j : KCs) {
@@ -229,6 +229,8 @@ void minDist(const unordered_map <int, pipe>& groupPipe, const unordered_map <in
 	}
 	vertexes[first] = 0;
 	comparingStepDown(groupPipe, KCs, vertexes, first, last);
-	findWay(groupPipe, KCs, answer, vertexes, first, last);
-	distance = vertexes.find(last)->second;
+	if (vertexes.find(last)->second != INFINITY) {
+		findWay(groupPipe, KCs, answer, vertexes, first, last);
+		distance = vertexes.find(last)->second;
+	}
 }
