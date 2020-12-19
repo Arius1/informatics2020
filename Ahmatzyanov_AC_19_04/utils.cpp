@@ -32,6 +32,29 @@ bool checkPipeByID(pipe& obj, int parameter) {
 	return obj.getId() == parameter;
 }
 
+void correctKCsSelect(const unordered_map <int, KC>& groupKC, int& inputKC, int& outputKC) {
+	bool correct = false;
+	while (!correct) {
+		inputKC = getIntValue("Введите id начальной КС", 0, 10000);
+		if (groupKC.find(inputKC) != groupKC.end()) {
+			correct = true;
+		}
+		else {
+			cout << "\nТакого объекта нет! Повторите попытку. ";
+		}
+	}
+	correct = false;
+	while (!correct) {
+		outputKC = getIntValue("Введите id конечной КС", 0, 10000);
+		if (groupKC.find(outputKC) != groupKC.end()) {
+			correct = true;
+		}
+		else {
+			cout << "\nТакого объекта нет! Повторите попытку. ";
+		}
+	}
+}
+
 void link(const unordered_map <int, KC>& groupKC, const unordered_map <int, pipe>& groupPipe, unordered_map <int, gts>& linkedKCs, unordered_set <int>& linkedPipes)
 {
 	int inputKC;
@@ -40,26 +63,7 @@ void link(const unordered_map <int, KC>& groupKC, const unordered_map <int, pipe
 	bool act = true;
 	bool correct = false;
 	while (act) {
-		while (!correct) {
-			inputKC = getIntValue("Введите id начальной КС", 0, 10000);
-			if (groupKC.find(inputKC) != groupKC.end()) {
-				correct = true;
-			}
-			else {
-				cout << "\nТакого объекта нет! Повторите попытку. ";
-			}
-		}
-		correct = false;
-		while (!correct) {
-			outputKC = getIntValue("Введите id конечной КС", 0, 10000);
-			if (groupKC.find(outputKC) != groupKC.end()) {
-				correct = true;
-			}
-			else {
-				cout << "\nТакого объекта нет! Повторите попытку. ";
-			}
-		}
-		correct = false;
+		correctKCsSelect(groupKC, inputKC, outputKC);
 		while (!correct) {
 			pipeId = getIntValue("Введите id трубы", 0, 10000);
 			if (groupPipe.find(pipeId) != groupPipe.end() and linkedPipes.find(pipeId) == linkedPipes.end()) {
@@ -235,10 +239,43 @@ void minDist(const unordered_map <int, pipe>& groupPipe, const unordered_map <in
 	}
 }
 
-void flowStepDown(const unordered_map <int, pipe>& groupPipe, const unordered_map <int, gts>& KCs, const int& first, const int& last, int& delta) {
-
+int flowStepDown(const unordered_map <int, pipe>& groupPipe, const unordered_map <int, gts>& KCs, unordered_map <int, int> vertexes, //int flowStep, так как элемент логики
+	unordered_map <int, bool>& visited, unordered_map <int, int> perf, const int& current, const int& last)
+{
+	unordered_map <int, int> linkedKCs; //ключ - КС | значение - труба
+	if (current == last) {
+		return vertexes.find(current)->second;
+	}
+	visited[current] = true;
+	findLinkedKCs(linkedKCs, groupPipe, KCs, current);
+	for (auto i : linkedKCs) {
+		int flow = min((groupPipe.find(i.first)->second.maxPerformance - perf.find(i.first)->second), vertexes.find(current)->second); // минимум от (Макс поток - поток) и выходного потока текущего КС
+		if (flow > 0 and visited.find(current)->second == false) {
+			vertexes[i.first] = flow;
+			int delta = flowStepDown(groupPipe, KCs, vertexes, visited, perf, i.first, last);
+			if (delta > 0) {
+				perf[i.first] += delta; //поднимаем потоки минимум подподтоков
+				return delta; 
+			}
+		}
+	}
+	return 0; //если не найдено путей
 }
 
-void maxFlow(const unordered_map <int, pipe>& groupPipe, const unordered_map <int, gts>& KCs, const int& first, const int& last, int& max) {
+void maxFlow(const unordered_map <int, pipe>& groupPipe, const unordered_map <int, gts>& KCs, unordered_map <int, int>& perf, const int& first, const int& last, int& max) {
+	//map perf = труба - поток
+	unordered_map <int, int> vertexes; //кс - выходной поток
+	unordered_map <int, bool> visited;
 	
+	while (1) {
+		for (auto i : KCs) {//метки посещения на false
+			visited[i.first] = false;
+			vertexes[i.first] = 0;
+		}
+		vertexes[first] = INT_MAX;
+		int delta = flowStepDown(groupPipe, KCs, vertexes, visited, perf, first, last);
+		if (delta == 0) {
+			break;
+		}
+	}
 }

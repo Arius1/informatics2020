@@ -236,7 +236,7 @@ int main() {
 			break;
 		}
 		case 11: {
-			int j = getIntValue("Введите действие: \n 1. Создать гтс без связей. \n 2. Считать гтс из файла. \n 3. Установить связь. \n 4. Удалить связь \n 5. Топологическая сортировка \n 6. Показать связи \n 7. Вывод в файл. \n 8. Кратчайший путь.", 1, 9);
+			int j = getIntValue("Введите действие: \n 1. Создать гтс без связей. \n 2. Считать гтс из файла. \n 3. Установить связь. \n 4. Удалить связь \n 5. Топологическая сортировка \n 6. Показать связи \n 7. Вывод в файл. \n 8. Кратчайший путь. \n9. Максимальный поток.", 1, 9);
 			switch (j) {
 				case 1: {
 					for (const auto& obj : groupKC) {
@@ -342,26 +342,9 @@ int main() {
 				case 8: {
 					int first, last;
 					double distance;
-					bool correct = false;
 					list <int> answer;
 
-					first = getIntValue("Введите id начальной КС", 0, 10000);
-					if (groupKC.find(first) != groupKC.end()) {
-						correct = true;
-					}
-					else {
-						cout << "\nТакого объекта нет! Повторите попытку. ";
-					}
-					correct = false;
-					while (!correct) {
-						last = getIntValue("Введите id конечной КС", 0, 10000);
-						if (groupKC.find(last) != groupKC.end()) {
-							  correct = true;
-						}
-						else {
-							cout << "\nТакого объекта нет! Повторите попытку. ";
-						}
-					}
+					correctKCsSelect(groupKC, first, last);
 					minDist(groupPipe, linkedKCs, answer, first, last, distance);
 					if (answer.size() > 0) {
 						int countKC = answer.size();
@@ -374,6 +357,21 @@ int main() {
 					else {
 						cout << "Путь между станциями не найден.\n";
 					}
+					break;
+				}
+				case 9: {
+					int first, last, maxflow;
+					unordered_map <int, int> perf; //труба - поток
+					for (auto i : linkedPipes) {
+						perf.emplace(i, 0);
+					}
+					maxflow = 0;
+					correctKCsSelect(groupKC, first, last);
+					maxFlow(groupPipe, linkedKCs, perf, first, last, maxflow);
+					for (auto i : perf) {
+						cout << "\n Труба id " << i.first << "\t Поток:" << i.second << " / " << groupPipe.find(i.first)->second.maxPerformance;
+					}
+					cout << "\nМаксимальный поток равен: " << maxflow << endl;
 					break;
 				}
 			}

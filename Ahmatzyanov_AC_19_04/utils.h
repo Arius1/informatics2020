@@ -63,12 +63,13 @@ void link(const std::unordered_map <int, KC>& groupKC, const std::unordered_map 
 void unlink(std::unordered_map <int, gts>& linkedKCs, std::unordered_set <int>& linkedPipes);
 void check(bool& act);
 std::string getName();
+void correctKCsSelect(const std::unordered_map <int, KC>& groupKC, int& inputKC, int& outputKC);
 void Menu();
 
 
 void topologicSort(const std::unordered_map <int, pipe>& groupPipe, const std::unordered_map <int, gts>& KCs, std::list <int>& answer, bool& cycle);
 void minDist(const std::unordered_map <int, pipe>& groupPipe, const std::unordered_map <int, gts>& KCs, std::list <int>& answer, const int& first, const int& last, double& distance);
-void maxFlow(const std::unordered_map <int, pipe>& groupPipe, const std::unordered_map <int, gts>& KCs, const int& first, const int& last, int& max);
+void maxFlow(const std::unordered_map <int, pipe>& groupPipe, const std::unordered_map <int, gts>& KCs, std::unordered_map <int, int>& perf, const int& first, const int& last, int& max);
 
 template <class className, typename par>
 using Filter = bool(*)(className& object, par parameter);
