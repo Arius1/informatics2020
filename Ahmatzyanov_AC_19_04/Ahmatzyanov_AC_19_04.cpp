@@ -31,6 +31,7 @@ int main() {
 			while (act) {
 				pipe newPipe;
 				cin >> newPipe;
+				newPipe.maxPerf();
 				groupPipe.emplace(newPipe.getId(), newPipe);
 				check(act);
 			}

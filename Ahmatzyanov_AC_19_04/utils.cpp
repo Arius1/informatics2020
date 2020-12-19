@@ -234,3 +234,11 @@ void minDist(const unordered_map <int, pipe>& groupPipe, const unordered_map <in
 		distance = vertexes.find(last)->second;
 	}
 }
+
+void flowStepDown(const unordered_map <int, pipe>& groupPipe, const unordered_map <int, gts>& KCs, const int& first, const int& last, int& delta) {
+
+}
+
+void maxFlow(const unordered_map <int, pipe>& groupPipe, const unordered_map <int, gts>& KCs, const int& first, const int& last, int& max) {
+	
+}

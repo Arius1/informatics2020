@@ -68,7 +68,7 @@ void Menu();
 
 void topologicSort(const std::unordered_map <int, pipe>& groupPipe, const std::unordered_map <int, gts>& KCs, std::list <int>& answer, bool& cycle);
 void minDist(const std::unordered_map <int, pipe>& groupPipe, const std::unordered_map <int, gts>& KCs, std::list <int>& answer, const int& first, const int& last, double& distance);
-
+void maxFlow(const std::unordered_map <int, pipe>& groupPipe, const std::unordered_map <int, gts>& KCs, const int& first, const int& last, int& max);
 
 template <class className, typename par>
 using Filter = bool(*)(className& object, par parameter);

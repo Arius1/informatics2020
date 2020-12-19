@@ -10,8 +10,8 @@ ostream& operator << (ostream& out, const pipe& p) {
 	cout << "id трубы: " << p.id << endl
 		<< "Длина трубы: " << p.length << endl
 		<< "Диаметр трубы: " << p.diameter << endl
-		<< "Статус: Труба" << (p.repairStatus == true ? " в ремонте" : " работает") << endl;
-
+		<< "Статус: Труба" << (p.repairStatus == true ? " в ремонте" : " работает") << endl
+		<< "Максимальная производительность: " << p.maxPerformance << endl;
 	return out;
 }
 
@@ -37,11 +37,18 @@ int pipe::getId()
 void pipe::changePipeRepairStatus()
 {
 	repairStatus = !repairStatus;
+	maxPerf();
+}
+
+void pipe::maxPerf()
+{
+	maxPerformance = (repairStatus) ? 0 : (int)pow(diameter, 5) / length;
 }
 
 void pipe::readPipeFile(ifstream& fin)
 {
 	fin >> id >> length >> diameter >> repairStatus;
+	maxPerf();
 }
 
 void pipe::printPipeFile(std::ofstream& fout)

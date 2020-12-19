@@ -8,4 +8,3 @@ public:
 	std::unordered_set <int> output;
 
 };
-

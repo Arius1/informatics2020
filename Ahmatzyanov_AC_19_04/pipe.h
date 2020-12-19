@@ -1,6 +1,6 @@
 #pragma once
 #include <string>
-
+#include <cmath>
 
 class pipe
 {
@@ -12,12 +12,14 @@ public:
 	double length = 0;
 	int diameter = 0;
 	bool repairStatus = false;
+	int maxPerformance = 0 ;
 
 	pipe();
 	
 	int getId();
 
 	void changePipeRepairStatus();
+	void maxPerf();
 
 	void readPipeFile(std::ifstream& fin);
 	void printPipeFile(std::ofstream& fout);
