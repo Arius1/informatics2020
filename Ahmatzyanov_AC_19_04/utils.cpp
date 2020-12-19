@@ -240,7 +240,7 @@ void minDist(const unordered_map <int, pipe>& groupPipe, const unordered_map <in
 }
 
 int flowStepDown(const unordered_map <int, pipe>& groupPipe, const unordered_map <int, gts>& KCs, unordered_map <int, int> vertexes, //int flowStep, так как элемент логики
-	unordered_map <int, bool>& visited, unordered_map <int, int> perf, const int& current, const int& last)
+	unordered_map <int, bool>& visited, unordered_map <int, int>& perf, const int& current, const int& last)
 {
 	unordered_map <int, int> linkedKCs; //ключ - КС | значение - труба
 	if (current == last) {
@@ -249,12 +249,12 @@ int flowStepDown(const unordered_map <int, pipe>& groupPipe, const unordered_map
 	visited[current] = true;
 	findLinkedKCs(linkedKCs, groupPipe, KCs, current);
 	for (auto i : linkedKCs) {
-		int flow = min((groupPipe.find(i.first)->second.maxPerformance - perf.find(i.first)->second), vertexes.find(current)->second); // минимум от (Макс поток - поток) и выходного потока текущего КС
-		if (flow > 0 and visited.find(current)->second == false) {
+		int flow = min((groupPipe.find(i.second)->second.maxPerformance - perf.find(i.second)->second), vertexes.find(current)->second); // минимум от (Макс поток - поток) и выходного потока текущего КС
+		if (flow > 0 and visited.find(i.first)->second == false) {
 			vertexes[i.first] = flow;
 			int delta = flowStepDown(groupPipe, KCs, vertexes, visited, perf, i.first, last);
 			if (delta > 0) {
-				perf[i.first] += delta; //поднимаем потоки минимум подподтоков
+				perf[i.second] += delta; //поднимаем потоки труб на минимум подподтоков
 				return delta; 
 			}
 		}
@@ -277,5 +277,6 @@ void maxFlow(const unordered_map <int, pipe>& groupPipe, const unordered_map <in
 		if (delta == 0) {
 			break;
 		}
+		max += delta;
 	}
 }
