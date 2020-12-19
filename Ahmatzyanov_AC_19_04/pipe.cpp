@@ -42,7 +42,7 @@ void pipe::changePipeRepairStatus()
 
 void pipe::maxPerf()
 {
-	maxPerformance = (int) ((repairStatus) ? 0 : (int)pow(diameter, 5) / length);
+	maxPerformance = (int) ((repairStatus) ? 0 : 10000*( sqrt(pow(diameter, 5) / (length) / pow(1000, 5)) ));
 }
 
 void pipe::readPipeFile(ifstream& fin)

@@ -49,7 +49,7 @@ void KC::readKCFile(std::ifstream& fin)
 
 void KC::printKCFile(std::ofstream& fout)
 {
-		fout << id << "\t" << Name << "\t" <<workshopCount << "\t" << workingWorkshopCount << "\t" << efficiency << "\t";
+		fout << id << "\t" << Name << "\t" <<workshopCount << "\t" << workingWorkshopCount << "\t" << efficiency << "\n";
 }
 
 
